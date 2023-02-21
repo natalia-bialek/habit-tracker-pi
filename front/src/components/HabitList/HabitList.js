@@ -4,11 +4,18 @@ import Habit from "../Habit/Habit";
 import NewHabit from "../NewHabit/NewHabit";
 import EditHabit from "../EditHabit/EditHabit";
 import Modal from "react-modal";
-import axios from "axios";
+import axios from "../../axios.js";
 
 function HabitList(props) {
+  //all data
   const [habits, setHabits] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
+
+  //show NewHabit component
+  const [newIsOpen, setNewIsOpen] = useState(false);
+
+  //modal to edit data
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  //which habit should be edited
   const [editingHabit, setEditingHabit] = useState({});
 
   async function deleteHabit(_id) {
@@ -41,7 +48,11 @@ function HabitList(props) {
   }
 
   function toggleModal() {
-    setIsOpen(!isOpen);
+    setModalIsOpen(!modalIsOpen);
+  }
+
+  function toggleComponent() {
+    setNewIsOpen(!newIsOpen);
   }
 
   function editHabitHandler(habit) {
@@ -59,9 +70,14 @@ function HabitList(props) {
 
   return (
     <div>
-      <NewHabit onAdd={(habit) => addHabit(habit)} />
+      <button onClick={toggleComponent}>New habit</button>
+      {newIsOpen && <NewHabit onAdd={(habit) => addHabit(habit)} />}
 
-      <Modal isOpen={isOpen} ariaHideApp={false} contentLabel="Edytuj habit">
+      <Modal
+        isOpen={modalIsOpen}
+        ariaHideApp={false}
+        contentLabel="Edytuj habit"
+      >
         <EditHabit
           editingHabit={editingHabit}
           onEdit={(habit) => editHabit(habit)}
