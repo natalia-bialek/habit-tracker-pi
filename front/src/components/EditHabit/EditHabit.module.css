@@ -1,4 +1,4 @@
-.newHabit {
+.editHabit {
   position: absolute;
   top: 30%;
   left: 50%;
@@ -17,7 +17,7 @@
   border-radius: 15px;
 }
 
-.newHabit_header {
+.editHabit_header {
   text-align: center;
   border-bottom: 1px solid black;
   width: 80%;
@@ -25,13 +25,13 @@
   padding-top: 10px;
 }
 
-.newHabit_title {
+.editHabit_title {
   display: flex;
   margin-bottom: 10px;
   align-items: baseline;
 }
 
-.newHabit_title input {
+.editHabit_title input {
   width: 100%;
 }
 

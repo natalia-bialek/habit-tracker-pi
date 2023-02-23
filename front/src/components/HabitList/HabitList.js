@@ -3,8 +3,13 @@ import styles from "./HabitList.module.css";
 import Habit from "../Habit/Habit";
 import NewHabit from "../NewHabit/NewHabit";
 import EditHabit from "../EditHabit/EditHabit";
-import Modal from "react-modal";
 import axios from "../../axios.js";
+import {
+  NotificationContainer,
+  NotificationManager,
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
+import HabitSummary from "../HabitSummary/HabitSummary";
 
 function HabitList(props) {
   //all data
@@ -14,7 +19,11 @@ function HabitList(props) {
   const [newIsOpen, setNewIsOpen] = useState(false);
 
   //modal to edit data
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [editIsOpen, setEditIsOpen] = useState(false);
+
+  //show all info about habit
+  const [habitIsOpen, setHabitIsOpen] = useState(false);
+
   //which habit should be edited
   const [editingHabit, setEditingHabit] = useState({});
 
@@ -26,29 +35,39 @@ function HabitList(props) {
 
   async function addHabit(habit) {
     const h = [...habits];
-    //backend
-    const result = await axios.post("/habits", habit);
-    const newHabit = result.data;
-    //frontend
-    h.push(newHabit);
-    setHabits(h);
+
+    try {
+      //backend
+      const result = await axios.post("/habits", habit);
+      const newHabit = result.data;
+      //frontend
+      h.push(newHabit);
+      setHabits(h);
+      toggleComponent();
+    } catch (error) {
+      NotificationManager.error(error.response.data.message);
+    }
   }
 
   async function editHabit(habit) {
-    //backend
-    await axios.put("/habits/" + habit._id, habit);
-    //frontend
-    const h = [...habits];
-    const index = h.findIndex((item) => item._id === habit._id);
-    if (index >= 0) {
-      h[index] = habit;
-      setHabits(h);
+    try {
+      //backend
+      await axios.put("/habits/" + habit._id, habit);
+      //frontend
+      const h = [...habits];
+      const index = h.findIndex((item) => item._id === habit._id);
+      if (index >= 0) {
+        h[index] = habit;
+        setHabits(h);
+      }
+      toggleEdit();
+    } catch (error) {
+      NotificationManager.error(error.response.data.message);
     }
-    toggleModal();
   }
 
-  function toggleModal() {
-    setModalIsOpen(!modalIsOpen);
+  function toggleEdit() {
+    setEditIsOpen(!editIsOpen);
   }
 
   function toggleComponent() {
@@ -56,8 +75,33 @@ function HabitList(props) {
   }
 
   function editHabitHandler(habit) {
-    toggleModal();
+    toggleEdit();
+  }
+
+  function showHabitHandler(habit) {
+    toggleShow();
     setEditingHabit(habit);
+  }
+
+  function toggleShow() {
+    setHabitIsOpen(!habitIsOpen);
+  }
+
+  async function showHabit(habit) {
+    // try {
+    //   //backend
+    //   await axios.put("/habits/" + habit._id, habit);
+    //   //frontend
+    //   const h = [...habits];
+    //   const index = h.findIndex((item) => item._id === habit._id);
+    //   if (index >= 0) {
+    //     h[index] = habit;
+    //     setHabits(h);
+    //   }
+    //   toggleShow();
+    // } catch (error) {
+    //   NotificationManager.error(error.response.data.message);
+    // }
   }
 
   useEffect(() => {
@@ -69,34 +113,44 @@ function HabitList(props) {
   }, []);
 
   return (
-    <div>
-      <button onClick={toggleComponent}>New habit</button>
-      {newIsOpen && <NewHabit onAdd={(habit) => addHabit(habit)} />}
+    <>
+      <NotificationContainer />
 
-      <Modal
-        isOpen={modalIsOpen}
-        ariaHideApp={false}
-        contentLabel="Edytuj habit"
-      >
+      <button id="newHabitButton" onClick={toggleComponent}>
+        Dodaj nawyk
+      </button>
+      {newIsOpen && (
+        <NewHabit
+          onCancel={() => setNewIsOpen(false)}
+          onAdd={(habit) => addHabit(habit)}
+        />
+      )}
+
+      {editIsOpen && (
         <EditHabit
           editingHabit={editingHabit}
           onEdit={(habit) => editHabit(habit)}
+          onCancel={() => setEditIsOpen(false)}
         />
-        <button onClick={() => toggleModal()}>Anuluj</button>
-      </Modal>
+      )}
+
       <div className={styles.habitList}>
         {habits.map((habit) => (
-          <Habit
-            key={habit._id}
-            title={habit.title}
-            description={habit.description}
-            _id={habit._id}
-            onEdit={(habit) => editHabitHandler(habit)}
-            onDelete={(_id) => deleteHabit(_id)}
+          <HabitSummary
+            habit={habit}
+            onClick={(habit) => showHabitHandler(habit)}
           />
         ))}
       </div>
-    </div>
+
+      {habitIsOpen && (
+        <Habit
+          habit={editingHabit}
+          onEdit={(habit) => editHabitHandler(habit)}
+          onDelete={(_id) => deleteHabit(_id)}
+        />
+      )}
+    </>
   );
 }
 

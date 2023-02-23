@@ -1,13 +1,98 @@
-body {
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+  /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif; */
+  font-family: "Questrial", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #94618e;
+  position: relative;
+  vertical-align: text-bottom;
 }
+
+input {
+  border: 0;
+  border-bottom: 1px solid #49274a;
+  outline: 0;
+  padding: 2px 0;
+  background: transparent;
+  font-family: "Montserrat", sans-serif;
+}
+
+select {
+  font-family: "Questrial", sans-serif;
+  outline: none;
+  border: none;
+  border-bottom: 1px solid #49274a;
+  background-color: transparent;
+  padding: 2px;
+  font-size: 15px;
+}
+
+label {
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  margin-right: 5px;
+}
+
+input[type="number"] {
+  text-align: center;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Genos", sans-serif;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 1.8em;
+}
+
+button {
+  outline: none;
+  border: none;
+  font-family: "Questrial", sans-serif;
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  border-radius: 10px;
+}
+
+button:active {
+  box-shadow: inset 0px 0px 24px -12px rgba(66, 68, 90, 1);
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.button-primary {
+  width: 150px;
+  height: 40px;
+  background-color: #49274a;
+  color: white;
+}
+
+.button-secondary {
+  width: 150px;
+  height: 40px;
+  background-color: #fbeee7;
+  color: rgb(95, 95, 95);
+}
+
+/* 
+#94618E grape
+#49274A eggplant
+#f4decb sand
+#fbeee7
+ */
