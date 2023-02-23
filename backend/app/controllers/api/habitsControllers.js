@@ -2,16 +2,21 @@ const Habit = require("../../db/models/habit");
 
 module.exports = {
   async createNewHabit(req, res) {
+    console.log(req.body);
     //new data
     const title = req.body.title;
-    const description = req.body.description;
+    const goal = req.body.goal;
+    const repeat = req.body.repeat;
+    const isDone = req.body.isDone;
 
     let habit;
     //create new habit obj
     try {
       habit = new Habit({
         title: title,
-        description: description,
+        goal: goal,
+        repeat: repeat,
+        isDone: isDone,
       });
       await habit.save();
     } catch (err) {
@@ -47,11 +52,15 @@ module.exports = {
 
     //updated data
     const title = req.body.title;
-    const description = req.body.description;
+    const goal = req.body.goal;
+    const repeat = req.body.repeat;
+    const isDone = req.body.isDone;
 
     const habit = await Habit.findOne({ _id: id });
     habit.title = title;
-    habit.description = description;
+    habit.goal = goal;
+    habit.repeat = repeat;
+    habit.isDone = isDone;
     await habit.save();
 
     res.status(201).json(habit);
