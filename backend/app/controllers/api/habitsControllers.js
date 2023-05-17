@@ -50,6 +50,8 @@ module.exports = {
     //id from the URL
     const id = req.params.id;
 
+    console.log(req.body);
+
     //updated data
     const title = req.body.title;
     const goal = req.body.goal;

@@ -12,6 +12,7 @@ function EditHabit(props) {
     title: props.editingHabit.title,
     goal: goal,
     repeat: props.editingHabit.repeat,
+    isDone: props.editingHabit.isDone,
   });
 
   const changeValue = (e) => {
@@ -42,6 +43,7 @@ function EditHabit(props) {
       title: state.title,
       goal: state.goal,
       repeat: state.repeat,
+      isDone: props.editingHabit.isDone,
       _id: props.editingHabit._id,
     });
   };

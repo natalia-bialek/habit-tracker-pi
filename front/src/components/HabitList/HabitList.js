@@ -4,6 +4,7 @@ import Habit from "../Habit/Habit";
 import NewHabit from "../NewHabit/NewHabit";
 import EditHabit from "../EditHabit/EditHabit";
 import axios from "../../axios.js";
+import { useHabitStore } from "../../store";
 import {
   NotificationContainer,
   NotificationManager,
@@ -12,8 +13,11 @@ import "react-notifications/lib/notifications.css";
 import HabitSummary from "../HabitSummary/HabitSummary";
 
 function HabitList(props) {
-  //all data
-  const [habits, setHabits] = useState([]);
+  const habits = useHabitStore((state) => state.habits);
+  const loadHabits = useHabitStore((state) => state.loadHabits);
+  const addHabit = useHabitStore((state) => state.addHabit);
+  const editHabit = useHabitStore((state) => state.editHabit);
+  const deleteHabit = useHabitStore((state) => state.deleteHabit);
 
   //show NewHabit component
   const [newIsOpen, setNewIsOpen] = useState(false);
@@ -27,39 +31,19 @@ function HabitList(props) {
   //which habit should be edited
   const [editingHabit, setEditingHabit] = useState({});
 
-  async function deleteHabit(_id) {
-    const h = [...habits].filter((habit) => habit._id !== _id);
-    await axios.delete("/habits/" + _id);
-    setHabits(h);
-  }
-
-  async function addHabit(habit) {
-    const h = [...habits];
-
+  async function addNewHabit(habit) {
     try {
-      //backend
-      const result = await axios.post("/habits", habit);
-      const newHabit = result.data;
-      //frontend
-      h.push(newHabit);
-      setHabits(h);
+      addHabit(habit);
       toggleComponent();
     } catch (error) {
-      NotificationManager.error(error.response.data.message);
+      console.error(error);
+      //NotificationManager.error(error.response.data.message);
     }
   }
 
-  async function editHabit(habit) {
+  async function editNewHabit(habit) {
     try {
-      //backend
-      await axios.put("/habits/" + habit._id, habit);
-      //frontend
-      const h = [...habits];
-      const index = h.findIndex((item) => item._id === habit._id);
-      if (index >= 0) {
-        h[index] = habit;
-        setHabits(h);
-      }
+      editHabit(habit);
       toggleEdit();
     } catch (error) {
       NotificationManager.error(error.response.data.message);
@@ -105,12 +89,8 @@ function HabitList(props) {
   }
 
   useEffect(() => {
-    async function fetchData() {
-      const results = await axios.get("/habits");
-      setHabits(results.data);
-    }
-    fetchData();
-  }, []);
+    loadHabits();
+  }, [habits]);
 
   return (
     <>
@@ -122,23 +102,24 @@ function HabitList(props) {
       {newIsOpen && (
         <NewHabit
           onCancel={() => setNewIsOpen(false)}
-          onAdd={(habit) => addHabit(habit)}
+          onAdd={(habit) => addNewHabit(habit)}
         />
       )}
 
       {editIsOpen && (
         <EditHabit
           editingHabit={editingHabit}
-          onEdit={(habit) => editHabit(habit)}
+          onEdit={(habit) => editNewHabit(habit)}
           onCancel={() => setEditIsOpen(false)}
         />
       )}
 
       <div className={styles.habitList}>
-        {habits.map((habit) => (
+        {habits.map((object, key) => (
           <HabitSummary
-            habit={habit}
-            onClick={(habit) => showHabitHandler(habit)}
+            key={key}
+            habit={object}
+            onClick={(object) => showHabitHandler(object)}
           />
         ))}
       </div>
@@ -146,7 +127,7 @@ function HabitList(props) {
       {habitIsOpen && (
         <Habit
           habit={editingHabit}
-          onEdit={(habit) => editHabitHandler(habit)}
+          onEdit={(object) => editHabitHandler(object)}
           onDelete={(_id) => deleteHabit(_id)}
         />
       )}
