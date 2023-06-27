@@ -5,28 +5,24 @@ import NewHabit from "../NewHabit/NewHabit";
 import EditHabit from "../EditHabit/EditHabit";
 import axios from "../../axios.js";
 import { useHabitStore } from "../../store";
-import {
-  NotificationContainer,
-  NotificationManager,
-} from "react-notifications";
-import "react-notifications/lib/notifications.css";
 import HabitSummary from "../HabitSummary/HabitSummary";
+import { useFetchHabits } from "../../hooks/useFetchHabits.js";
+import { useHabit } from "../../hooks/useHabit";
 
 function HabitList(props) {
-  const habits = useHabitStore((state) => state.habits);
-  const loadHabits = useHabitStore((state) => state.loadHabits);
+  const habits = useFetchHabits();
   const addHabit = useHabitStore((state) => state.addHabit);
   const editHabit = useHabitStore((state) => state.editHabit);
   const deleteHabit = useHabitStore((state) => state.deleteHabit);
 
   //show NewHabit component
-  const [newIsOpen, setNewIsOpen] = useState(false);
+  const [isNewOpen, setIsNewOpen] = useState(false);
 
   //modal to edit data
-  const [editIsOpen, setEditIsOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   //show all info about habit
-  const [habitIsOpen, setHabitIsOpen] = useState(false);
+  const [isHabitOpen, setIsHabitOpen] = useState(false);
 
   //which habit should be edited
   const [editingHabit, setEditingHabit] = useState({});
@@ -46,16 +42,16 @@ function HabitList(props) {
       editHabit(habit);
       toggleEdit();
     } catch (error) {
-      NotificationManager.error(error.response.data.message);
+      //NotificationManager.error(error.response.data.message);
     }
   }
 
   function toggleEdit() {
-    setEditIsOpen(!editIsOpen);
+    setIsEditOpen(!isEditOpen);
   }
 
   function toggleComponent() {
-    setNewIsOpen(!newIsOpen);
+    setIsNewOpen(!isNewOpen);
   }
 
   function editHabitHandler(habit) {
@@ -68,7 +64,7 @@ function HabitList(props) {
   }
 
   function toggleShow() {
-    setHabitIsOpen(!habitIsOpen);
+    setIsHabitOpen(!isHabitOpen);
   }
 
   async function showHabit(habit) {
@@ -88,43 +84,37 @@ function HabitList(props) {
     // }
   }
 
-  useEffect(() => {
-    loadHabits();
-  }, [habits]);
+  // useEffect(() => {
+  //   // loadHabits();
+  // }, [habits]);
 
   return (
     <>
-      <NotificationContainer />
-
       <button id="newHabitButton" onClick={toggleComponent}>
         Dodaj nawyk
       </button>
-      {newIsOpen && (
+      {isNewOpen && (
         <NewHabit
-          onCancel={() => setNewIsOpen(false)}
+          onCancel={() => setIsNewOpen(false)}
           onAdd={(habit) => addNewHabit(habit)}
         />
       )}
 
-      {editIsOpen && (
+      {isEditOpen && (
         <EditHabit
           editingHabit={editingHabit}
           onEdit={(habit) => editNewHabit(habit)}
-          onCancel={() => setEditIsOpen(false)}
+          onCancel={() => setIsEditOpen(false)}
         />
       )}
 
       <div className={styles.habitList}>
         {habits.map((object, key) => (
-          <HabitSummary
-            key={key}
-            habit={object}
-            onClick={(object) => showHabitHandler(object)}
-          />
+          <HabitSummary key={key} object={object} />
         ))}
       </div>
 
-      {habitIsOpen && (
+      {isHabitOpen && (
         <Habit
           habit={editingHabit}
           onEdit={(object) => editHabitHandler(object)}

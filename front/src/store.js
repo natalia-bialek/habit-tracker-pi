@@ -3,10 +3,9 @@ import axios from "./axios.js";
 
 export const useHabitStore = create((set, get) => ({
   habits: [],
-  loadHabits: async () => {
-    const results = await axios.get("/habits");
-    set({ habits: await results.data });
-  },
+  showingHabit: null,
+  isCurrentHabitVisible: false,
+
   addHabit: async (habit) => {
     //backend
     const result = await axios.post("/habits", habit);

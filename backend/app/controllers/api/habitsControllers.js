@@ -20,7 +20,9 @@ module.exports = {
       });
       await habit.save();
     } catch (err) {
-      return res.status(422).json({ message: err.message });
+      return res
+        .status(422)
+        .json({ message: err.message, controller: "createNewHabit" });
     }
 
     res.status(201).json(habit);
@@ -34,7 +36,9 @@ module.exports = {
       //DEBUG
       //throw new Error("Some error");
     } catch (err) {
-      return res.status(500).json({ message: err.message });
+      return res
+        .status(500)
+        .json({ message: err.message, controller: "getAllHabits" });
     }
 
     res.status(200).json(doc);
@@ -42,8 +46,14 @@ module.exports = {
 
   async getHabit(req, res) {
     const id = req.params.id;
-    const habit = await Habit.findOne({ _id: id });
-    res.status(200).json(habit);
+    try {
+      const habit = await Habit.findById(id);
+      res.status(200).json(habit);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: err.message, controller: "getHabit" });
+    }
   },
 
   async updateHabit(req, res) {
@@ -58,13 +68,19 @@ module.exports = {
     const repeat = req.body.repeat;
     const isDone = req.body.isDone;
 
-    const habit = await Habit.findOne({ _id: id });
-    habit.title = title;
-    habit.goal = goal;
-    habit.repeat = repeat;
-    habit.isDone = isDone;
-    await habit.save();
-
+    let habit;
+    try {
+      habit = await Habit.findOne({ _id: id });
+      habit.title = title;
+      habit.goal = goal;
+      habit.repeat = repeat;
+      habit.isDone = isDone;
+      await habit.save();
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: err.message, controller: "updateHabit" });
+    }
     res.status(201).json(habit);
   },
 
