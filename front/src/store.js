@@ -3,8 +3,8 @@ import axios from "./axios.js";
 
 export const useHabitStore = create((set, get) => ({
   habits: [],
-  showingHabit: null,
-  isCurrentHabitVisible: false,
+  showingHabit: { _id: null, isVisible: false },
+  editingHabit: { _id: null, isVisible: false },
 
   addHabit: async (habit) => {
     //backend
@@ -13,16 +13,7 @@ export const useHabitStore = create((set, get) => ({
     //frontend
     set((state) => ({ habits: [...state.habits], newHabit }));
   },
-  editHabit: async (habit) => {
-    //backend
-    await axios.put("/habits/" + habit._id, habit);
-    //frontend
-    const index = get().habits.findIndex((item) => item._id === habit.id);
-    console.log(index);
-    if (index >= 0) {
-      get().habits[index] = habit;
-    }
-  },
+
   deleteHabit: async (_id) => {
     set({
       habits: get().habits.filter((item) => item._id !== _id),

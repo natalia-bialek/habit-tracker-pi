@@ -13,8 +13,7 @@ function HabitSummary({ object, onClickFunction }) {
 
   const sendIdToTheStore = () => {
     useHabitStore.setState({
-      showingHabit: object._id,
-      isCurrentHabitVisible: true,
+      showingHabit: { _id: object._id, isVisible: true },
     });
   };
 

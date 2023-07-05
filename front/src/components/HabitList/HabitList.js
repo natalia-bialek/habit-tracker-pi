@@ -100,27 +100,11 @@ function HabitList(props) {
         />
       )}
 
-      {isEditOpen && (
-        <EditHabit
-          editingHabit={editingHabit}
-          onEdit={(habit) => editNewHabit(habit)}
-          onCancel={() => setIsEditOpen(false)}
-        />
-      )}
-
       <div className={styles.habitList}>
         {habits.map((object, key) => (
           <HabitSummary key={key} object={object} />
         ))}
       </div>
-
-      {isHabitOpen && (
-        <Habit
-          habit={editingHabit}
-          onEdit={(object) => editHabitHandler(object)}
-          onDelete={(_id) => deleteHabit(_id)}
-        />
-      )}
     </>
   );
 }

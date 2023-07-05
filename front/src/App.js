@@ -3,12 +3,11 @@ import HabitList from "./components/HabitList/HabitList";
 import Habit from "./components/Habit/Habit";
 import styles from "./App.module.css";
 import { useHabitStore } from "./store";
+import EditHabit from "./components/EditHabit/EditHabit";
 
 function App() {
-  let showingHabitId = useHabitStore((state) => state.showingHabit);
-  let isCurrentHabitVisible = useHabitStore(
-    (state) => state.isCurrentHabitVisible
-  );
+  let showingHabit = useHabitStore((state) => state.showingHabit);
+  let editingHabit = useHabitStore((state) => state.editingHabit);
 
   return (
     <div className={styles.App}>
@@ -16,14 +15,17 @@ function App() {
         <HabitList />
       </div>
       <div className={styles.onlyHabit}>
-        {isCurrentHabitVisible && (
-          <Habit
-            _id={showingHabitId}
-            //onEdit={(object) => editHabitHandler(object)}
-            //onDelete={(_id) => deleteHabit(_id)}
+        {showingHabit.isVisible && <Habit _id={showingHabit._id} />}
+      </div>
+      <>
+        {editingHabit.isVisible && (
+          <EditHabit
+            _id={editingHabit._id}
+            //onEdit={(habit) => editNewHabit(habit)}
+            //onCancel={() => setIsEditOpen(false)}
           />
         )}
-      </div>
+      </>
     </div>
   );
 }

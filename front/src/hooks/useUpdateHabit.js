@@ -1,10 +1,15 @@
 import axios from "../axios.js";
 import { useEffect, useState } from "react";
 
-export function useUpdateHabit(id, habit) {
+export function useUpdateHabit(_id, updatedhabit) {
   async function update() {
     try {
-      const results = await axios.put("/habits/" + id, habit);
+      await axios.put("/habits/" + _id, updatedhabit);
+      // const index = habits.findIndex((item) => item._id === updatedhabit.id);
+      // console.log(index);
+      // if (index >= 0) {
+      //   habits[index] = updatedhabit;
+      // }
     } catch (error) {
       return error.data;
     }

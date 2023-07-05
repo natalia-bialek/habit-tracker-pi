@@ -19,10 +19,10 @@ module.exports = {
         isDone: isDone,
       });
       await habit.save();
-    } catch (err) {
+    } catch (error) {
       return res
         .status(422)
-        .json({ message: err.message, controller: "createNewHabit" });
+        .json({ message: error.message, controller: "createNewHabit" });
     }
 
     res.status(201).json(habit);
@@ -35,10 +35,10 @@ module.exports = {
       doc = await Habit.find({});
       //DEBUG
       //throw new Error("Some error");
-    } catch (err) {
+    } catch (error) {
       return res
         .status(500)
-        .json({ message: err.message, controller: "getAllHabits" });
+        .json({ message: error.message, controller: "getAllHabits" });
     }
 
     res.status(200).json(doc);
@@ -52,7 +52,7 @@ module.exports = {
     } catch (error) {
       return res
         .status(500)
-        .json({ message: err.message, controller: "getHabit" });
+        .json({ message: error.message, controller: "getHabit" });
     }
   },
 
@@ -79,7 +79,7 @@ module.exports = {
     } catch (error) {
       return res
         .status(500)
-        .json({ message: err.message, controller: "updateHabit" });
+        .json({ message: error.message, controller: "updateHabit" });
     }
     res.status(201).json(habit);
   },
