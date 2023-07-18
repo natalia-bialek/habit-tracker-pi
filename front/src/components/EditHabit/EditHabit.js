@@ -1,52 +1,51 @@
 import React, { useEffect, useState } from "react";
 import styles from "./EditHabit.module.css";
+import { useHabit } from "../../hooks/useHabit";
+import { useMutation } from "@tanstack/react-query";
 
-function EditHabit(props) {
-  const [goal, setGoal] = useState({
-    amount: props.editingHabit.goal.amount,
-    unit: props.editingHabit.goal.unit,
-    frequency: props.editingHabit.goal.frequency,
+function EditHabit({ _id }) {
+  const h = useHabit(_id);
+
+  const [title, setTitle] = useState(h.title);
+  const [repeat, setRepeat] = useState(h.repeat);
+  const [isDone, setIsDone] = useState(h.isDone);
+
+  const [amount, setAmount] = useState(h.goal.amount);
+  const [unit, setUnit] = useState(h.goal.unit);
+  const [frequency, setFrequency] = useState(h.goal.frequency);
+
+  // useEffect(() => {
+  //   setState({
+  //     ...state,
+  //     goal: goal,
+  //   });
+  // }, [goal]);
+
+  // const editHabit = () => {
+  //   props.onEdit({
+  //     title: state.title,
+  //     goal: state.goal,
+  //     repeat: state.repeat,
+  //     isDone: props.editingHabit.isDone,
+  //     _id: props.editingHabit._id,
+  //   });
+  // };
+
+  const mutation = useMutation({
+    mutationFn: useHabit(_id),
+    onSuccess: (data) => {
+      useQueryClient().setQueryData(["habits", { _id: _id }], data);
+    },
   });
-  const [state, setState] = useState({
-    _id: props.editingHabit._id,
-    title: props.editingHabit.title,
-    goal: goal,
-    repeat: props.editingHabit.repeat,
-    isDone: props.editingHabit.isDone,
+
+  mutation.mutate({
+    _id: _id,
   });
 
-  const changeValue = (e) => {
-    const value = e.target.value;
-    setState({
-      ...state,
-      [e.target.name]: value,
-    });
-  };
-
-  const changeGoal = (e) => {
-    const value = e.target.value;
-    setGoal({
-      ...goal,
-      [e.target.name]: value,
-    });
-  };
-
-  useEffect(() => {
-    setState({
-      ...state,
-      goal: goal,
-    });
-  }, [goal]);
-
-  const editHabit = () => {
-    props.onEdit({
-      title: state.title,
-      goal: state.goal,
-      repeat: state.repeat,
-      isDone: props.editingHabit.isDone,
-      _id: props.editingHabit._id,
-    });
-  };
+  const { status, data, error } = useQuery({
+    queryKey: ["habits", { _id: _id }],
+    queryFn: useHabit(_id),
+  });
 
   return (
     <div className={styles.editHabit}>
@@ -57,8 +56,8 @@ function EditHabit(props) {
           id="input_title"
           type="text"
           name="title"
-          value={state.title}
-          onChange={changeValue}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
       </div>
       <label>Cel:</label>
@@ -67,16 +66,16 @@ function EditHabit(props) {
           id="input_amount"
           type="number"
           name="amount"
-          value={goal.amount}
-          onChange={changeGoal}
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
           min="1"
           max="1000"
         />
         <select
           id="select_unit"
           name="unit"
-          onChange={changeGoal}
-          value={goal.unit}
+          onChange={(e) => setUnit(e.target.value)}
+          value={unit}
         >
           <option value="razy">Razy</option>
           <option value="min">Min</option>
@@ -85,8 +84,8 @@ function EditHabit(props) {
         <select
           id="select_frequency"
           name="frequency"
-          onChange={changeGoal}
-          value={goal.frequency}
+          onChange={(e) => setFrequency(e.target.value)}
+          value={frequency}
         >
           <option value="dzień">Dzień</option>
           <option value="tydzień">Tydzień</option>
@@ -99,8 +98,8 @@ function EditHabit(props) {
         <select
           id="select_repeat"
           name="repeat"
-          onChange={changeValue}
-          value={state.repeat}
+          onChange={(e) => setRepeat(e.target.value)}
+          value={repeat}
         >
           <option value="codziennie">Codziennie</option>
           <option value="co tydzień">Co tydzień</option>
@@ -109,12 +108,8 @@ function EditHabit(props) {
       </div>
 
       <div className="buttons-container">
-        <button className="button-secondary" onClick={props.onCancel}>
-          Anuluj
-        </button>
-        <button className="button-primary" onClick={() => editHabit()}>
-          Zapisz
-        </button>
+        <button className="button-secondary">Anuluj</button>
+        <button className="button-primary">Zapisz</button>
       </div>
     </div>
   );
