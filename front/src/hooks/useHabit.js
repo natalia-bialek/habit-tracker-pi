@@ -1,27 +1,29 @@
-import { useEffect, useState } from "react";
-import { useFetchHabits } from "./useFetchHabits";
-import { useHabitStore } from "../store";
 import axios from "../axios.js";
+import { useQuery } from "@tanstack/react-query";
 
 export function useHabit(id) {
-  const [habit, setHabit] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
+  const placeholderHabit = {
+    title: "loading",
+    repeat: "codziennie",
+    goal: {
+      amount: 0,
+      unit: "razy",
+      frequency: "dzień",
+    },
+    isDone: false,
+  };
 
-  async function getHabit(id) {
-    try {
-      const results = await axios.get("/habits/" + id);
-      setHabit(results.data);
-      //console.log("- useHabit results.data", results.data);
-    } catch (error) {
-      console.log(error.message);
+  const { data, error, status } = useQuery(
+    ["getHabit", id],
+    () => axios.get("/habits/" + id).then((res) => res.data),
+    {
+      placeholderData: placeholderHabit,
     }
-    setIsLoading(false);
+  );
+
+  if (status === "error") {
+    console.log(error.message);
+    return;
   }
-
-  useEffect(() => {
-    //console.log("- useHabit !habit.length");
-    getHabit(id);
-  }, [id]);
-
-  return { habit, isLoading };
+  return data;
 }

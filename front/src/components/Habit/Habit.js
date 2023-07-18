@@ -1,37 +1,33 @@
-import { useState, memo } from "react";
+import { useState } from "react";
 import styles from "./Habit.module.css";
 import { useHabit } from "../../hooks/useHabit";
 import { useHabitStore } from "../../store";
 
 function Habit({ _id }) {
-  const { habit, isLoading } = useHabit(_id);
+  const habit = useHabit(_id);
   const { title, repeat, goal, isDone } = habit;
+
   const [isComplete, setIsComplete] = useState(isDone);
 
   const editHandler = () => {
-    !isLoading &&
-      useHabitStore.setState({
-        editingHabit: { _id: _id, isVisible: true },
-      });
+    useHabitStore.setState({
+      editingHabit: { _id: _id, isVisible: true },
+    });
   };
 
   return (
-    !isLoading && (
-      <>
-        <div className={styles.habit_component}>
-          <h5 className={styles.habit_header}>{title}</h5>
+    <div className={styles.habit_component}>
+      <h5 className={styles.habit_header}>{title}</h5>
 
-          <p className={styles.habit_description}>{goal.amount}</p>
-          <p className={styles.habit_description}>{goal.unit}</p>
-          <p className={styles.habit_description}>{goal.frequency}</p>
+      <p className={styles.habit_description}>{goal.amount}</p>
+      <p className={styles.habit_description}>{goal.unit}</p>
+      <p className={styles.habit_description}>{goal.frequency}</p>
 
-          <p>POWTARZAJ {repeat}</p>
+      <p>POWTARZAJ {repeat}</p>
 
-          <button onClick={editHandler}>edytuj</button>
-          {/* <button onClick={() => props.onDelete(_id)}>usuń</button> */}
-        </div>
-      </>
-    )
+      <button onClick={editHandler}>edytuj</button>
+      {/* <button onClick={() => props.onDelete(_id)}>usuń</button> */}
+    </div>
   );
 }
 
