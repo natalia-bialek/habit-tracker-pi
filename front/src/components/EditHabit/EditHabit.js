@@ -3,7 +3,8 @@ import styles from "./EditHabit.module.css";
 import { useHabit } from "../../hooks/useHabit";
 import { useUpdateHabit } from "../../hooks/useUpdateHabit";
 
-function EditHabit({ _id }) {
+function EditHabit({ _id, mainHeader }) {
+  console.log(_id);
   const h = useHabit(_id);
 
   const [title, setTitle] = useState(h.title);
@@ -32,7 +33,7 @@ function EditHabit({ _id }) {
         })
       }
     >
-      <h2 className={styles.editHabit_header}>Edytuj nawyk</h2>
+      <h2 className={styles.editHabit_header}>{mainHeader}</h2>
       <div className={styles.editHabit_title}>
         <label>Tytuł:</label>
         <input

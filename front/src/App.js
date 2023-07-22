@@ -1,67 +1,47 @@
-import { React, useState, useEffect } from "react";
-// import axios from "../axios.js";
+import { React, useState } from "react";
+import axios from "./axios.js";
 import HabitList from "./components/HabitList/HabitList";
 import Habit from "./components/Habit/Habit";
 import styles from "./App.module.css";
 import { useHabitStore } from "./store";
 import EditHabit from "./components/EditHabit/EditHabit";
-import { useQuery } from "@tanstack/react-query";
-import { useFetchHabits } from "./hooks/useFetchHabits";
-
-// function fetchHabits() {
-//   const [habits, setHabits] = useState([]);
-
-//   useEffect(() => {
-//     async function fetch() {
-//       try {
-//         const results = await axios.get("/habits");
-//         setHabits(results.data);
-//       } catch (error) {
-//         return error.data;
-//       }
-//     }
-//     if (!habits.length) {
-//       fetch();
-//     }
-//   }, [habits]);
-//   return habits;
-// }
 
 function App() {
-  let showingHabit = useHabitStore((state) => state.showingHabit);
-  let editingHabit = useHabitStore((state) => state.editingHabit);
+  const showingHabit = useHabitStore((state) => state.showingHabit);
+  const editingHabit = useHabitStore((state) => state.editingHabit);
+  const initialHabit = useHabitStore((state) => state.initialHabit);
 
-  // const { data, error, isError, isLoading } = useQuery(
-  //   ["habits"],
-  //   useFetchHabits
-  // );
+  const [newHabitId, setNewHabitId] = useState("");
 
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
-
-  // if (isError) {
-  //   return <div>Error! {error.message}</div>;
-  // }
+  async function createNewHabit() {
+    try {
+      const result = await axios.post("/habits", initialHabit);
+      setNewHabitId(result.data._id);
+      useHabitStore.setState({
+        editingHabit: { _id: newHabitId, isVisible: true, mode: "addingHabit" },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className={styles.App}>
+      <button id="newHabitButton" onClick={createNewHabit}>
+        Dodaj nawyk
+      </button>
+      {editingHabit.mode === "addingHabit" && editingHabit.isVisible && (
+        <EditHabit _id={newHabitId} mainHeader={"Dodaj nowy nawyk"} />
+      )}
       <div className={styles.HabitListContainer}>
-        {/* <HabitList habits={data} /> */}
         <HabitList />
       </div>
       <div className={styles.onlyHabit}>
         {showingHabit.isVisible && <Habit _id={showingHabit._id} />}
       </div>
-      <>
-        {editingHabit.isVisible && (
-          <EditHabit
-            _id={editingHabit._id}
-            //onEdit={(habit) => editNewHabit(habit)}
-            //onCancel={() => setIsEditOpen(false)}
-          />
-        )}
-      </>
+      {editingHabit.mode === "editingHabit" && editingHabit.isVisible && (
+        <EditHabit _id={editingHabit._id} mainHeader={"Edytuj nawyk"} />
+      )}
     </div>
   );
 }
