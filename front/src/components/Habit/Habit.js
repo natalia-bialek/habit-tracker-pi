@@ -11,7 +11,7 @@ function Habit({ _id }) {
 
   const editHandler = () => {
     useHabitStore.setState({
-      editingHabit: { _id: _id, isVisible: true, mode: "editingHabit" },
+      editingHabit: { _id: _id, isVisible: true, mode: "editHabit" },
     });
   };
 

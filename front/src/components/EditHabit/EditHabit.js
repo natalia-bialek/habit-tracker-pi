@@ -2,11 +2,16 @@ import React, { useCallback, useEffect, useState } from "react";
 import styles from "./EditHabit.module.css";
 import { useHabit } from "../../hooks/useHabit";
 import { useUpdateHabit } from "../../hooks/useUpdateHabit";
+import { useHabitStore } from "../../store";
+import axios from "../../axios.js";
 
-function EditHabit({ _id, mainHeader }) {
-  console.log(_id);
-  const h = useHabit(_id);
+function EditHabit({ _id = "" }) {
+  const updateHabit = useUpdateHabit(_id);
 
+  const h = useHabit(_id ? _id : null);
+  const editingHabit = useHabitStore((state) => state.editingHabit);
+
+  // initial values
   const [title, setTitle] = useState(h.title);
   const [repeat, setRepeat] = useState(h.repeat);
   const [isDone, setIsDone] = useState(h.isDone);
@@ -15,25 +20,55 @@ function EditHabit({ _id, mainHeader }) {
   const [unit, setUnit] = useState(h.goal.unit);
   const [frequency, setFrequency] = useState(h.goal.frequency);
 
-  const updateHabit = useUpdateHabit(_id);
+  const handleEditSubmit = () => {
+    updateHabit({
+      title: title,
+      repeat: repeat,
+      isDone: isDone,
+      goal: {
+        amount: amount,
+        unit: unit,
+        frequency: frequency,
+      },
+    });
+  };
+
+  const handleAddSubmit = async () => {
+    try {
+      const result = await axios.post("/habits", {
+        title: title,
+        repeat: repeat,
+        isDone: isDone,
+        goal: {
+          amount: amount,
+          unit: unit,
+          frequency: frequency,
+        },
+      });
+      useHabitStore.setState({
+        editingHabit: {
+          _id: result.data._id,
+          isVisible: false,
+          mode: "addHabit",
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <form
       className={styles.editHabit}
-      onSubmit={() =>
-        updateHabit({
-          title: title,
-          repeat: repeat,
-          isDone: isDone,
-          goal: {
-            amount: amount,
-            unit: unit,
-            frequency: frequency,
-          },
-        })
+      onSubmit={
+        editingHabit.mode === "editHabit" ? handleEditSubmit : handleAddSubmit
       }
     >
-      <h2 className={styles.editHabit_header}>{mainHeader}</h2>
+      <h2 className={styles.editHabit_header}>
+        {editingHabit.mode === "editHabit"
+          ? "Edytuj nawyk"
+          : "Dodaj nowy nawyk"}
+      </h2>
       <div className={styles.editHabit_title}>
         <label>Tytuł:</label>
         <input
