@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styles from "./EditHabit.module.css";
 import { useHabit } from "../../hooks/useHabit";
-import { useMutation } from "@tanstack/react-query";
+import { useUpdateHabit } from "../../hooks/useUpdateHabit";
 
 function EditHabit({ _id }) {
   const h = useHabit(_id);
@@ -14,41 +14,24 @@ function EditHabit({ _id }) {
   const [unit, setUnit] = useState(h.goal.unit);
   const [frequency, setFrequency] = useState(h.goal.frequency);
 
-  // useEffect(() => {
-  //   setState({
-  //     ...state,
-  //     goal: goal,
-  //   });
-  // }, [goal]);
-
-  // const editHabit = () => {
-  //   props.onEdit({
-  //     title: state.title,
-  //     goal: state.goal,
-  //     repeat: state.repeat,
-  //     isDone: props.editingHabit.isDone,
-  //     _id: props.editingHabit._id,
-  //   });
-  // };
-
-  const mutation = useMutation({
-    mutationFn: useHabit(_id),
-    onSuccess: (data) => {
-      useQueryClient().setQueryData(["habits", { _id: _id }], data);
-    },
-  });
-
-  mutation.mutate({
-    _id: _id,
-  });
-
-  const { status, data, error } = useQuery({
-    queryKey: ["habits", { _id: _id }],
-    queryFn: useHabit(_id),
-  });
+  const updateHabit = useUpdateHabit(_id);
 
   return (
-    <div className={styles.editHabit}>
+    <form
+      className={styles.editHabit}
+      onSubmit={() =>
+        updateHabit({
+          title: title,
+          repeat: repeat,
+          isDone: isDone,
+          goal: {
+            amount: amount,
+            unit: unit,
+            frequency: frequency,
+          },
+        })
+      }
+    >
       <h2 className={styles.editHabit_header}>Edytuj nawyk</h2>
       <div className={styles.editHabit_title}>
         <label>Tytuł:</label>
@@ -109,9 +92,11 @@ function EditHabit({ _id }) {
 
       <div className="buttons-container">
         <button className="button-secondary">Anuluj</button>
-        <button className="button-primary">Zapisz</button>
+        <button type="submit" className="button-primary">
+          Zapisz
+        </button>
       </div>
-    </div>
+    </form>
   );
 }
 
