@@ -24,8 +24,17 @@ function Habit({ _id }) {
     deleteHabit(_id);
   };
 
+  const closeHandler = () => {
+    useHabitStore.setState({
+      showingHabit: { _id: undefined, isVisible: false },
+    });
+  };
+
   return (
     <div className={styles.habit_component}>
+      <button className={styles.habit_close_btn} onClick={closeHandler}>
+        X
+      </button>
       <h5 className={styles.habit_header}>{title}</h5>
 
       <p className={styles.habit_description}>{goal.amount}</p>
