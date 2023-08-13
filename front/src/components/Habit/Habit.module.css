@@ -1,10 +1,11 @@
 .habit_component {
-  max-width: 400px;
-  min-width: 200px;
+  height: 100%;
+  width: 100%;
   padding: 20px 10px;
   display: flex;
   flex-direction: column;
   background-color: #f4f4f4;
+  grid-area: single;
 }
 
 .habit_header {
@@ -18,10 +19,4 @@
 
 .habit_description {
   font-size: 16px;
-}
-
-.habit_edit {
-}
-
-.habit_delete {
 }

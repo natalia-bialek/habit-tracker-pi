@@ -1,6 +1,8 @@
 .habitList {
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px 10px;
+  gap: 10px;
+  grid-area: list;
+  overflow-y: scroll;
+  max-height: calc(100vh - 70px);
 }
