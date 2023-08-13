@@ -8,12 +8,7 @@ function HabitList() {
   return (
     <div className={styles.habitList}>
       {habits.map((object) => (
-        <HabitSummary
-          key={object._id}
-          _id={object._id}
-          title={object.title}
-          isDone={object.isDone}
-        />
+        <HabitSummary key={object._id} habit={object} />
       ))}
     </div>
   );

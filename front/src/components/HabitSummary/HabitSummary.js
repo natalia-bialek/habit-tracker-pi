@@ -3,35 +3,37 @@ import styles from "./HabitSummary.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useHabitStore } from "../../store";
+import { useUpdateHabit } from "../../hooks/useUpdateHabit";
 
-function HabitSummary({ object, onClickFunction }) {
-  const [isDone, setIsDone] = useState(object.isDone);
-
-  const completeHandler = () => {
-    setIsDone(!isDone);
-  };
+function HabitSummary({ habit }) {
+  const updateHabit = useUpdateHabit(habit._id);
+  const [isMarkedDone, setIsMarkedDone] = useState(habit.isDone);
+  let w = undefined;
+  // console.log(_id, title, isDone);
 
   const sendIdToTheStore = () => {
     useHabitStore.setState({
-      showingHabit: { _id: object._id, isVisible: true },
+      showingHabit: { _id: habit._id, isVisible: true },
     });
   };
 
-  useEffect(() => {
-    object.isDone = isDone;
-  }, [isDone]);
-
+  const handlaMarkAsDone = async () => {
+    try {
+      setIsMarkedDone(!isMarkedDone);
+      const updatedHabit = { ...habit, isDone: !isMarkedDone };
+      await updateHabit(updatedHabit);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className={styles.summary}>
       <h5 onClick={() => sendIdToTheStore()} className={styles.summary_header}>
-        {object.title}
+        {habit.title}
       </h5>
 
-      <button
-        className={styles.summary_button}
-        onClick={() => completeHandler()}
-      >
-        {isDone ? (
+      <button className={styles.summary_button} onClick={handlaMarkAsDone}>
+        {isMarkedDone ? (
           <>
             <FontAwesomeIcon icon={faCheck} /> Zrobione
           </>
