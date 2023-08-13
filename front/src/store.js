@@ -15,19 +15,4 @@ export const useHabitStore = create((set, get) => ({
     },
     isDone: false,
   },
-
-  // addHabit: async (habit) => {
-  //   //backend
-  //   const result = await axios.post("/habits", habit);
-  //   const newHabit = result.data;
-  //   //frontend
-  //   set((state) => ({ habits: [...state.habits], newHabit }));
-  // },
-
-  deleteHabit: async (_id) => {
-    set({
-      habits: get().habits.filter((item) => item._id !== _id),
-    });
-    await axios.delete("/habits/" + _id);
-  },
 }));
