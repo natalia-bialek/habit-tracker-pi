@@ -11,9 +11,19 @@
   }
 }
 
-.summary_header {
+.summary__header {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.header__title {
   max-width: 65%;
   cursor: pointer;
+}
+
+.header__goal {
+  white-space: nowrap;
 }
 
 .summary_button {

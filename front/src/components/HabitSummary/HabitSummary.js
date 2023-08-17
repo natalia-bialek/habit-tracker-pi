@@ -8,8 +8,6 @@ import { useUpdateHabit } from "../../hooks/useUpdateHabit";
 function HabitSummary({ habit }) {
   const updateHabit = useUpdateHabit(habit._id);
   const [isMarkedDone, setIsMarkedDone] = useState(habit.isDone);
-  let w = undefined;
-  // console.log(_id, title, isDone);
 
   const sendIdToTheStore = () => {
     useHabitStore.setState({
@@ -17,7 +15,7 @@ function HabitSummary({ habit }) {
     });
   };
 
-  const handlaMarkAsDone = async () => {
+  const handleMarkAsDone = async () => {
     try {
       setIsMarkedDone(!isMarkedDone);
       const updatedHabit = { ...habit, isDone: !isMarkedDone };
@@ -28,11 +26,16 @@ function HabitSummary({ habit }) {
   };
   return (
     <div className={styles.summary}>
-      <h5 onClick={() => sendIdToTheStore()} className={styles.summary_header}>
-        {habit.title}
-      </h5>
+      <div className={styles.summary__header}>
+        <h5 className={styles.header__title} onClick={() => sendIdToTheStore()}>
+          {habit.title}
+        </h5>
+        <p className={styles.header__goal}>
+          Cel: {habit.goal.amount} {habit.goal.unit} na {habit.goal.frequency}
+        </p>
+      </div>
 
-      <button className={styles.summary_button} onClick={handlaMarkAsDone}>
+      <button className={styles.summary_button} onClick={handleMarkAsDone}>
         {isMarkedDone ? (
           <>
             <FontAwesomeIcon icon={faCheck} /> Zrobione
