@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./Habit.module.css";
+import styles from "./Habit.module.scss";
 import { useHabit } from "../../hooks/useHabit";
 import { useHabitStore } from "../../store";
 import { useDeleteHabit } from "../../hooks/useDeleteHabit";
@@ -7,14 +7,11 @@ import { useDeleteHabit } from "../../hooks/useDeleteHabit";
 function Habit({ _id }) {
   const habit = useHabit(_id);
 
-  const { title, repeat, goal, isDone } = habit;
-
-  const [isComplete, setIsComplete] = useState(isDone);
+  const { title, repeat, goal, createdDate } = habit;
 
   const deleteHabit = useDeleteHabit(_id);
 
   const editHandler = () => {
-    console.log("EDIT");
     useHabitStore.setState({
       editingHabit: { _id: _id, isVisible: true, mode: "editHabit" },
     });
@@ -31,20 +28,30 @@ function Habit({ _id }) {
   };
 
   return (
-    <div className={styles.habit_component}>
-      <button className={styles.habit_close_btn} onClick={closeHandler}>
+    <div className={styles.habit}>
+      <button className={styles.habit__button_close} onClick={closeHandler}>
         X
       </button>
-      <h5 className={styles.habit_header}>{title}</h5>
+      <h5 className={styles.habit__header}>{title}</h5>
 
-      <p className={styles.habit_description}>{goal.amount}</p>
-      <p className={styles.habit_description}>{goal.unit}</p>
-      <p className={styles.habit_description}>{goal.frequency}</p>
+      <div className={styles.habit__details}>
+        Cel:
+        <span className={styles.habit__description}>{goal.amount} </span>
+        <span className={styles.habit__description}>{goal.unit} </span>
+        na
+        <span className={styles.habit__description}>{goal.frequency}</span>
+        <p className={styles.habit__description}>Przypominaj {repeat}</p>
+      </div>
+      <div className={styles.habit__created_date}>{createdDate}</div>
 
-      <p>POWTARZAJ {repeat}</p>
-
-      <button onClick={editHandler}>edytuj</button>
-      <button onClick={deleteHandler}>usuń</button>
+      <div className="buttons-container">
+        <button className="button-secondary" onClick={deleteHandler}>
+          usuń
+        </button>
+        <button className="button-primary" onClick={editHandler}>
+          edytuj
+        </button>
+      </div>
     </div>
   );
 }

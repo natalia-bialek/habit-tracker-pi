@@ -1,4 +1,5 @@
 const Habit = require("../../db/models/habit");
+const dateFnsTz = require("date-fns-tz");
 
 module.exports = {
   async createNewHabit(req, res) {
@@ -8,6 +9,9 @@ module.exports = {
     const goal = req.body.goal;
     const repeat = req.body.repeat;
     const isDone = req.body.isDone;
+    const createdDate = dateFnsTz.format(new Date(), "dd-MM-yyyy HH:mm", {
+      timeZone: "Europe/Warsaw",
+    });
 
     let habit;
     //create new habit obj
@@ -17,6 +21,7 @@ module.exports = {
         goal: goal,
         repeat: repeat,
         isDone: isDone,
+        createdDate: createdDate,
       });
       await habit.save();
     } catch (error) {
@@ -33,8 +38,6 @@ module.exports = {
 
     try {
       doc = await Habit.find({});
-      //DEBUG
-      //throw new Error("Some error");
     } catch (error) {
       return res
         .status(500)
@@ -67,6 +70,7 @@ module.exports = {
     const goal = req.body.goal;
     const repeat = req.body.repeat;
     const isDone = req.body.isDone;
+    const createdDate = req.body.createdDate;
 
     let habit;
     try {
@@ -75,6 +79,7 @@ module.exports = {
       habit.goal = goal;
       habit.repeat = repeat;
       habit.isDone = isDone;
+      habit.createdDate = createdDate;
       await habit.save();
     } catch (error) {
       return res
