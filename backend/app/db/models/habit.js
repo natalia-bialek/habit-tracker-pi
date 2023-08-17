@@ -34,6 +34,9 @@ const HabitSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  createdDate: {
+    type: String,
+  },
   // startDate: {
   //   type: Date,
   //   default: Date.now,

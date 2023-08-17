@@ -1,6 +1,11 @@
 .App {
   display: grid;
-  padding: 15px 15%;
+  padding: 15px 2%;
   width: 100vw;
   height: 100vh;
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: 70px auto;
+  grid-template-areas:
+    "nav nav nav"
+    "list single single";
 }

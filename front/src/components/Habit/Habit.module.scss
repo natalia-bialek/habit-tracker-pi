@@ -1,0 +1,44 @@
+.habit {
+  height: 100%;
+  width: 100%;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: column;
+  background-color: #f4f4f4;
+  grid-area: single;
+  position: relative;
+  padding: 20px;
+  max-height: 200px;
+  justify-content: space-between;
+
+  &__button_close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: rgba(0, 0, 0, 0.7);
+    font-weight: 800;
+  }
+
+  &__header {
+    font-family: "Monserrat", sans-serif;
+    text-transform: uppercase;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    margin: 0 0 10px 0;
+  }
+
+  &__details {
+    display: flex;
+  }
+
+  &__description {
+    font-size: 16px;
+    padding: 0 3px;
+  }
+
+  &__description:last-child {
+    margin-left: auto;
+    margin-right: 0;
+  }
+}
