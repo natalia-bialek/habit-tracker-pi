@@ -6,7 +6,7 @@ export function useHabit(id = "") {
     title: "loading",
     repeat: "codziennie",
     goal: {
-      amount: 0,
+      amount: 1,
       unit: "razy",
       frequency: "dzień",
     },

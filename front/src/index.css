@@ -1,6 +1,7 @@
 * {
   box-sizing: border-box;
   margin: 0;
+  padding: 0;
 }
 
 body {
@@ -10,7 +11,7 @@ body {
   font-family: "Questrial", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #94618e;
+  background-color: #a0a0a0;
   position: relative;
   vertical-align: text-bottom;
 }
@@ -64,6 +65,7 @@ button {
   font-weight: 500;
   letter-spacing: 0.1em;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 button:active {
@@ -79,15 +81,34 @@ button:active {
 .button-primary {
   width: 150px;
   height: 40px;
-  background-color: #49274a;
-  color: white;
+  background-color: #34526f;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #dedede;
+  transition: background-color 0.2s ease-in, box-shadow 0.2s ease-in;
+}
+
+.button-primary:hover {
+  background-color: #1c2c3b;
+  box-shadow: inset 0px 0px 22px 0px rgba(16, 17, 31, 1);
 }
 
 .button-secondary {
   width: 150px;
   height: 40px;
-  background-color: #fbeee7;
-  color: rgb(95, 95, 95);
+  background-color: transparent;
+  font-weight: 600;
+  letter-spacing: 2px;
+  border: 2px solid #34526f;
+  color: #263d52;
+  transition: background-color 0.2s ease-in, color 0.2s ease-in,
+    box-shadow 0.2s ease-in;
+}
+
+.button-secondary:hover {
+  background-color: #34526f;
+  color: #dedede;
+  box-shadow: inset 0px 0px 22px 0px rgba(16, 17, 31, 1);
 }
 
 /* 

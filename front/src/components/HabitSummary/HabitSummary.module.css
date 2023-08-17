@@ -1,10 +1,14 @@
 .summary {
   display: flex;
-  background-color: #fbeee7;
+  background-color: #fff;
   width: 100%;
   min-height: 80px;
   justify-content: space-between;
   padding: 10px 20px;
+  flex-direction: column;
+  @media screen and (min-width: 768px) {
+    flex-direction: row;
+  }
 }
 
 .summary_header {
@@ -13,7 +17,7 @@
 }
 
 .summary_button {
-  background-color: #4d4845;
+  background-color: #1b3c5c;
   height: 50px;
   margin: auto 0;
   padding: 15px;
@@ -23,8 +27,15 @@
   justify-content: center;
   align-items: center;
   gap: 10px;
+  white-space: nowrap;
+  transition: background-color 0.2s ease-in, box-shadow 0.2s ease-in;
 }
 
 .summary_button svg {
   font-size: 1.4em;
+}
+
+.summary_button:hover {
+  /* background-color: #1c2c3b; */
+  box-shadow: inset 0px 0px 22px 0px rgba(16, 17, 31, 1);
 }

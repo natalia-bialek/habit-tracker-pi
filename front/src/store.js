@@ -9,7 +9,7 @@ export const useHabitStore = create((set, get) => ({
     title: "Tytuł",
     repeat: "codziennie",
     goal: {
-      amount: 0,
+      amount: 1,
       unit: "razy",
       frequency: "dzień",
     },

@@ -79,8 +79,9 @@ function EditHabit({ _id = "" }) {
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
-      <label>Cel:</label>
+
       <div className={styles.goal_container}>
+        <label>Cel:</label>
         <input
           id="input_amount"
           type="number"
@@ -113,7 +114,7 @@ function EditHabit({ _id = "" }) {
       </div>
 
       <div>
-        <label>Powtarzaj:</label>
+        <label>Przypominaj:</label>
         <select
           id="select_repeat"
           name="repeat"
