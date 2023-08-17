@@ -40,9 +40,9 @@ function Habit({ _id }) {
         <span className={styles.habit__description}>{goal.unit} </span>
         na
         <span className={styles.habit__description}>{goal.frequency}</span>
-        <p className={styles.habit__description}>Przypominaj {repeat}</p>
+        <p className={styles.habit__description}>Przypominaj: {repeat}</p>
       </div>
-      <div className={styles.habit__created_date}>{createdDate}</div>
+      <div className={styles.habit__created_date}>Utworzono: {createdDate}</div>
 
       <div className="buttons-container">
         <button className="button-secondary" onClick={deleteHandler}>

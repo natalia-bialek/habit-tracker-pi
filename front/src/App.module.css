@@ -3,7 +3,7 @@
   padding: 15px 2%;
   width: 100vw;
   height: 100vh;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1.2fr 2fr;
   grid-template-rows: 70px auto;
   grid-template-areas:
     "nav nav nav"

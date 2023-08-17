@@ -1,15 +1,15 @@
 .habit {
   height: 100%;
-  width: 100%;
-  padding: 20px 10px;
   display: flex;
   flex-direction: column;
   background-color: #f4f4f4;
   grid-area: single;
   position: relative;
   padding: 20px;
-  max-height: 200px;
+  max-height: 230px;
   justify-content: space-between;
+  margin-top: 45px;
+  margin-left: 20px;
 
   &__button_close {
     position: absolute;
@@ -40,5 +40,10 @@
   &__description:last-child {
     margin-left: auto;
     margin-right: 0;
+  }
+
+  &__created_date {
+    margin-bottom: -20px;
+    color: rgba(0, 0, 0, 0.486);
   }
 }

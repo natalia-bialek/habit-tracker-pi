@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import styles from "./EditHabit.module.css";
+import styles from "./HabitEdit.module.css";
 import { useHabit } from "../../hooks/useHabit";
 import { useUpdateHabit } from "../../hooks/useUpdateHabit";
 import { useHabitStore } from "../../store";
 import axios from "../../axios.js";
 
-function EditHabit({ _id = "" }) {
+function HabitEdit({ _id = "" }) {
   const updateHabit = useUpdateHabit(_id);
 
   const h = useHabit(_id ? _id : null);
@@ -20,6 +20,8 @@ function EditHabit({ _id = "" }) {
   const [unit, setUnit] = useState(h.goal.unit);
   const [frequency, setFrequency] = useState(h.goal.frequency);
 
+  const createdDate = h.createdDate;
+
   const handleEditSubmit = () => {
     updateHabit({
       title: title,
@@ -30,6 +32,7 @@ function EditHabit({ _id = "" }) {
         unit: unit,
         frequency: frequency,
       },
+      createdDate: createdDate,
     });
   };
 
@@ -44,6 +47,7 @@ function EditHabit({ _id = "" }) {
           unit: unit,
           frequency: frequency,
         },
+        createdDate: createdDate,
       });
       useHabitStore.setState({
         editingHabit: {
@@ -59,17 +63,17 @@ function EditHabit({ _id = "" }) {
 
   return (
     <form
-      className={styles.editHabit}
+      className={styles.habitEdit}
       onSubmit={
-        editingHabit.mode === "editHabit" ? handleEditSubmit : handleAddSubmit
+        editingHabit.mode === "habitEdit" ? handleEditSubmit : handleAddSubmit
       }
     >
-      <h2 className={styles.editHabit_header}>
-        {editingHabit.mode === "editHabit"
+      <h2 className={styles.habitEdit_header}>
+        {editingHabit.mode === "habitEdit"
           ? "Edytuj nawyk"
           : "Dodaj nowy nawyk"}
       </h2>
-      <div className={styles.editHabit_title}>
+      <div className={styles.habitEdit_title}>
         <label>Tytuł:</label>
         <input
           id="input_title"
@@ -137,4 +141,4 @@ function EditHabit({ _id = "" }) {
   );
 }
 
-export default EditHabit;
+export default HabitEdit;
