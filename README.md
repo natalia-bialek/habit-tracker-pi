@@ -11,7 +11,7 @@ Needs backend .env file
   npm install 
   cd front 
   npm install
-  cd .
+  cd ..
   cd backend
   npm install
 ```
