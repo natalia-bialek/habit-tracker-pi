@@ -1,31 +1,18 @@
 import axios from "../axios.js";
 import { useQuery } from "@tanstack/react-query";
 
-export function useHabit(id = "") {
-  const placeholderHabit = {
-    title: "loading",
-    repeat: "codziennie",
-    goal: {
-      amount: 1,
-      unit: "razy",
-      frequency: "dzień",
+export function useHabit(id) {
+  const { data, error, isError, isLoading } = useQuery({
+    queryKey: ["getHabit", id],
+    queryFn: async () => {
+      const res = await axios.get("/habits/" + id);
+      return res.data;
     },
-    isDone: false,
-  };
+  });
 
-  const { data, error, status } = useQuery(
-    id ? ["getHabit", id] : ["addHabit"],
-    id
-      ? () => axios.get("/habits/" + id).then((res) => res.data)
-      : () => placeholderHabit,
-    {
-      placeholderData: placeholderHabit,
-    }
-  );
-
-  if (status === "error") {
-    console.log(error.message);
+  if (isError) {
+    console.error(error.message);
     return;
   }
-  return data;
+  return [data, isLoading];
 }

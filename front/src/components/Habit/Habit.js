@@ -5,11 +5,9 @@ import { useHabitStore } from "../../store";
 import { useDeleteHabit } from "../../hooks/useDeleteHabit";
 
 function Habit({ _id }) {
-  const habit = useHabit(_id);
+  const [habit, isLoading] = useHabit(_id);
 
-  const { title, repeat, goal, createdDate } = habit;
-
-  const deleteHabit = useDeleteHabit(_id);
+  const deleteHabitMutation = useDeleteHabit();
 
   const editHandler = () => {
     useHabitStore.setState({
@@ -17,8 +15,8 @@ function Habit({ _id }) {
     });
   };
 
-  const deleteHandler = () => {
-    deleteHabit(_id);
+  const deleteHandler = async () => {
+    deleteHabitMutation.mutateAsync(_id);
   };
 
   const closeHandler = () => {
@@ -28,31 +26,46 @@ function Habit({ _id }) {
   };
 
   return (
-    <div className={styles.habit}>
-      <button className={styles.habit__button_close} onClick={closeHandler}>
-        X
-      </button>
-      <h5 className={styles.habit__header}>{title}</h5>
+    <>
+      {isLoading && "Loading..."}
+      {habit && (
+        <div className={styles.habit}>
+          <button className={styles.habit__button_close} onClick={closeHandler}>
+            X
+          </button>
+          <h5 className={styles.habit__header}>{habit.title || ""}</h5>
 
-      <div className={styles.habit__details}>
-        Cel:
-        <span className={styles.habit__description}>{goal.amount} </span>
-        <span className={styles.habit__description}>{goal.unit} </span>
-        na
-        <span className={styles.habit__description}>{goal.frequency}</span>
-        <p className={styles.habit__description}>Przypominaj {repeat}</p>
-      </div>
-      <div className={styles.habit__created_date}>{createdDate}</div>
+          <div className={styles.habit__details}>
+            Cel:
+            <span className={styles.habit__description}>
+              {habit.goal.amount || 1}
+            </span>
+            <span className={styles.habit__description}>
+              {habit.goal.unit || "razy"}
+            </span>
+            na
+            <span className={styles.habit__description}>
+              {habit.goal.frequency || "dzień"}
+            </span>
+            <p className={styles.habit__description}>
+              Przypominaj {habit.repeat || "codziennie"}
+            </p>
+          </div>
+          <div className={styles.habit__created_date}>
+            {habit.createdDate || null}
+          </div>
 
-      <div className="buttons-container">
-        <button className="button-secondary" onClick={deleteHandler}>
-          usuń
-        </button>
-        <button className="button-primary" onClick={editHandler}>
-          edytuj
-        </button>
-      </div>
-    </div>
+          <div className="buttons-container">
+            <button className="button-secondary" onClick={deleteHandler}>
+              usuń
+            </button>
+            <button className="button-primary" onClick={editHandler}>
+              edytuj
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

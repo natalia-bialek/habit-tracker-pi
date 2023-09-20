@@ -4,28 +4,30 @@ import HabitSummary from "../HabitSummary/HabitSummary";
 import { useFetchHabits } from "../../hooks/useFetchHabits.js";
 
 function HabitList() {
-  const habits = useFetchHabits();
+  const data = useFetchHabits();
+  const [habits, isLoading] = data;
   return (
-    <div className={styles.habitList}>
-      <div className={styles.toDoHabitList}>
-        <h3>Pora na:</h3>
-        {habits.length
-          ? habits.map((object, key = object.id) => {
+    <>
+      {isLoading && "Ładowanie..."}
+      {habits && (
+        <div className={styles.habitList}>
+          <div className={styles.toDoHabitList}>
+            <h3>Pora na:</h3>
+            {habits.map((object, key = object.id) => {
               if (object && object.isDone === false)
                 return <HabitSummary key={key} habit={object} />;
-            })
-          : "Budowanie nowych nawyków! Dodaj pierwszy korzystając z przycisku na górze strony."}
-      </div>
-      <div className={styles.completedHabitList}>
-        <h3>Odhaczone:</h3>
-        {habits.length
-          ? habits.map((object, key = object.id) => {
-              if (object && object.isDone === true)
+            })}
+          </div>
+          <div className={styles.completedHabitList}>
+            <h3>Odhaczone:</h3>
+            {habits.map((object, key = object.id) => {
+              if (object && object.isDone)
                 return <HabitSummary key={key} habit={object} />;
-            })
-          : "Całkiem tu pusto... Może coś zrobimy?"}
-      </div>
-    </div>
+            })}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

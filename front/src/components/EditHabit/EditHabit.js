@@ -4,24 +4,44 @@ import { useHabit } from "../../hooks/useHabit";
 import { useUpdateHabit } from "../../hooks/useUpdateHabit";
 import { useHabitStore } from "../../store";
 import axios from "../../axios.js";
+import { useMutation } from "@tanstack/react-query";
 
 function EditHabit({ _id = "" }) {
-  const updateHabit = useUpdateHabit(_id);
+  const updateHabitMutation = useUpdateHabit(_id);
 
-  const h = useHabit(_id ? _id : null);
+  const data = useHabit(_id);
+  const [habit, isLoading] = data;
   const editingHabit = useHabitStore((state) => state.editingHabit);
 
   // initial values
-  const [title, setTitle] = useState(h.title);
-  const [repeat, setRepeat] = useState(h.repeat);
-  const [isDone, setIsDone] = useState(h.isDone);
+  const [title, setTitle] = useState(habit?.title || "");
+  const [repeat, setRepeat] = useState(habit?.repeat || "codziennie");
+  const [isDone, setIsDone] = useState(habit?.isDone || false);
 
-  const [amount, setAmount] = useState(h.goal.amount);
-  const [unit, setUnit] = useState(h.goal.unit);
-  const [frequency, setFrequency] = useState(h.goal.frequency);
+  const [amount, setAmount] = useState(habit?.goal?.amount || 1);
+  const [unit, setUnit] = useState(habit?.goal?.unit || "razy");
+  const [frequency, setFrequency] = useState(habit?.goal?.frequency || "dzień");
+
+  const mutation = useMutation({
+    mutationFn: async (newHabit) => {
+      return await axios.post("/habits", newHabit);
+    },
+    onSuccess: (data) => {
+      useHabitStore.setState({
+        editingHabit: {
+          _id: data._id,
+          isVisible: false,
+          mode: "addHabit",
+        },
+      });
+    },
+    onError: (error) => {
+      console.error(error.message);
+    },
+  });
 
   const handleEditSubmit = () => {
-    updateHabit({
+    updateHabitMutation.mutate({
       title: title,
       repeat: repeat,
       isDone: isDone,
@@ -34,106 +54,103 @@ function EditHabit({ _id = "" }) {
   };
 
   const handleAddSubmit = async () => {
-    try {
-      const result = await axios.post("/habits", {
-        title: title,
-        repeat: repeat,
-        isDone: isDone,
-        goal: {
-          amount: amount,
-          unit: unit,
-          frequency: frequency,
-        },
-      });
-      useHabitStore.setState({
-        editingHabit: {
-          _id: result.data._id,
-          isVisible: false,
-          mode: "addHabit",
-        },
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    const newHabit = {
+      title: title,
+      repeat: repeat,
+      isDone: isDone,
+      goal: {
+        amount: amount,
+        unit: unit,
+        frequency: frequency,
+      },
+    };
+    mutation.mutate(newHabit);
   };
 
   return (
-    <form
-      className={styles.editHabit}
-      onSubmit={
-        editingHabit.mode === "editHabit" ? handleEditSubmit : handleAddSubmit
-      }
-    >
-      <h2 className={styles.editHabit_header}>
-        {editingHabit.mode === "editHabit"
-          ? "Edytuj nawyk"
-          : "Dodaj nowy nawyk"}
-      </h2>
-      <div className={styles.editHabit_title}>
-        <label>Tytuł:</label>
-        <input
-          id="input_title"
-          type="text"
-          name="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </div>
-
-      <div className={styles.goal_container}>
-        <label>Cel:</label>
-        <input
-          id="input_amount"
-          type="number"
-          name="amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          min="1"
-          max="1000"
-        />
-        <select
-          id="select_unit"
-          name="unit"
-          onChange={(e) => setUnit(e.target.value)}
-          value={unit}
+    <>
+      {isLoading && "Loading..."}
+      {habit && (
+        <form
+          className={styles.editHabit}
+          onSubmit={
+            editingHabit.mode === "editHabit"
+              ? handleEditSubmit
+              : handleAddSubmit
+          }
         >
-          <option value="razy">Razy</option>
-          <option value="min">Min</option>
-        </select>
-        <p>na</p>
-        <select
-          id="select_frequency"
-          name="frequency"
-          onChange={(e) => setFrequency(e.target.value)}
-          value={frequency}
-        >
-          <option value="dzień">Dzień</option>
-          <option value="tydzień">Tydzień</option>
-          <option value="miesiąc">Miesiąc</option>
-        </select>
-      </div>
+          <h2 className={styles.editHabit_header}>
+            {editingHabit.mode === "editHabit"
+              ? "Edytuj nawyk"
+              : "Dodaj nowy nawyk"}
+          </h2>
+          <div className={styles.editHabit_title}>
+            <label>Tytuł:</label>
+            <input
+              id="input_title"
+              type="text"
+              name="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
+          <div className={styles.goal_container}>
+            <label>Cel:</label>
+            <input
+              id="input_amount"
+              type="number"
+              name="amount"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              min="1"
+              max="1000"
+            />
 
-      <div>
-        <label>Przypominaj:</label>
-        <select
-          id="select_repeat"
-          name="repeat"
-          onChange={(e) => setRepeat(e.target.value)}
-          value={repeat}
-        >
-          <option value="codziennie">Codziennie</option>
-          <option value="co tydzień">Co tydzień</option>
-          <option value="co miesiąc">Co miesiąc</option>
-        </select>
-      </div>
+            <select
+              id="select_unit"
+              name="unit"
+              onChange={(e) => setUnit(e.target.value)}
+              value={unit}
+            >
+              <option value="razy">Razy</option>
+              <option value="min">Min</option>
+            </select>
+            <p>na</p>
+            <select
+              id="select_frequency"
+              name="frequency"
+              onChange={(e) => setFrequency(e.target.value)}
+              value={frequency}
+            >
+              <option value="dzień">Dzień</option>
+              <option value="tydzień">Tydzień</option>
+              <option value="miesiąc">Miesiąc</option>
+            </select>
+          </div>
 
-      <div className="buttons-container">
-        <button className="button-secondary">Anuluj</button>
-        <button type="submit" className="button-primary">
-          Zapisz
-        </button>
-      </div>
-    </form>
+          <div>
+            <label>Przypominaj:</label>
+            <select
+              id="select_repeat"
+              name="repeat"
+              onChange={(e) => setRepeat(e.target.value)}
+              value={repeat}
+            >
+              <option value="codziennie">Codziennie</option>
+              <option value="co tydzień">Co tydzień</option>
+              <option value="co miesiąc">Co miesiąc</option>
+            </select>
+          </div>
+
+          <div className="buttons-container">
+            <button className="button-secondary">Anuluj</button>
+            <button type="submit" className="button-primary">
+              Zapisz
+            </button>
+          </div>
+        </form>
+      )}
+    </>
   );
 }
 
