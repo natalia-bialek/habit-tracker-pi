@@ -1,5 +1,6 @@
 import axios from "../axios.js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useHabitStore } from "../store.js";
 
 export function useDeleteHabit() {
   const queryClient = useQueryClient();
@@ -8,7 +9,12 @@ export function useDeleteHabit() {
     mutationFn: async (habitId) => {
       axios.delete("/habits/" + habitId);
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["habits"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["habits"] });
+      useHabitStore.setState({
+        showingHabit: { _id: undefined, isVisible: false },
+      });
+    },
   });
 
   return mutation;

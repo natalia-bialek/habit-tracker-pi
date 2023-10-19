@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "./EditHabit.module.css";
 import { useHabit } from "../../hooks/useHabit";
 import { useUpdateHabit } from "../../hooks/useUpdateHabit";
 import { useHabitStore } from "../../store";
 import axios from "../../axios.js";
 import { useMutation } from "@tanstack/react-query";
+import * as dateFnsTz from "date-fns-tz";
 
 function EditHabit({ _id = "" }) {
   const updateHabitMutation = useUpdateHabit(_id);
@@ -21,6 +22,12 @@ function EditHabit({ _id = "" }) {
   const [amount, setAmount] = useState(habit?.goal?.amount || 1);
   const [unit, setUnit] = useState(habit?.goal?.unit || "razy");
   const [frequency, setFrequency] = useState(habit?.goal?.frequency || "dzień");
+
+  const createdDate =
+    habit?.createdDate ||
+    dateFnsTz.format(new Date(), "dd-MM-yyyy HH:mm", {
+      timeZone: "Europe/Warsaw",
+    });
 
   const mutation = useMutation({
     mutationFn: async (newHabit) => {
@@ -50,6 +57,7 @@ function EditHabit({ _id = "" }) {
         unit: unit,
         frequency: frequency,
       },
+      createdDate: createdDate,
     });
   };
 
@@ -63,6 +71,7 @@ function EditHabit({ _id = "" }) {
         unit: unit,
         frequency: frequency,
       },
+      createdDate: createdDate,
     };
     mutation.mutate(newHabit);
   };
