@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./Habit.module.scss";
+import styles from "./Habit.module.css";
 import { useHabit } from "../../hooks/useHabit";
 import { useHabitStore } from "../../store";
 import { useDeleteHabit } from "../../hooks/useDeleteHabit";

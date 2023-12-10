@@ -62,10 +62,16 @@ button {
   border: none;
   font-family: "Questrial", sans-serif;
   text-transform: uppercase;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.1em;
   border-radius: 10px;
   cursor: pointer;
+  padding: 15px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  letter-spacing: 2px;
+  min-width: 150px;
 }
 
 button:active {
@@ -79,11 +85,7 @@ button:active {
 }
 
 .button-primary {
-  width: 150px;
-  height: 40px;
   background-color: #34526f;
-  font-weight: 600;
-  letter-spacing: 2px;
   color: #dedede;
   transition: background-color 0.2s ease-in, box-shadow 0.2s ease-in;
 }
@@ -94,11 +96,7 @@ button:active {
 }
 
 .button-secondary {
-  width: 150px;
-  height: 40px;
   background-color: transparent;
-  font-weight: 600;
-  letter-spacing: 2px;
   border: 2px solid #34526f;
   color: #263d52;
   transition: background-color 0.2s ease-in, color 0.2s ease-in,
@@ -109,6 +107,12 @@ button:active {
   background-color: #34526f;
   color: #dedede;
   box-shadow: inset 0px 0px 22px 0px rgba(16, 17, 31, 1);
+}
+
+.error-container {
+  color: rgb(190, 46, 46);
+  text-transform: uppercase;
+  font-weight: 700;
 }
 
 /* 
