@@ -6,6 +6,8 @@ import styles from "./App.module.css";
 import { useHabitStore } from "./store";
 import EditHabit from "./components/EditHabit/EditHabit";
 import Navigation from "./components/Navigation/Navigation.js";
+import UserRegister from "./components/UserRegister/UserRegister.js";
+import UserLogin from "./components/UserLogin/UserLogin.js";
 
 function App() {
   const showingHabit = useHabitStore((state) => state.showingHabit);
@@ -14,7 +16,9 @@ function App() {
   return (
     <div className={styles.App}>
       <Navigation />
-      <div className={styles.HabitListContainer}>
+      <UserRegister />
+      <UserLogin />
+      {/* <div className={styles.HabitListContainer}>
         <HabitList />
       </div>
       <div className={styles.onlyHabit}>
@@ -25,7 +29,7 @@ function App() {
       )}
       {editingHabit.mode === "addHabit" && editingHabit.isVisible && (
         <EditHabit />
-      )}
+      )}*/}
     </div>
   );
 }
