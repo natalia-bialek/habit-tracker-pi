@@ -1,11 +1,23 @@
 import React from "react";
 import { useHabitStore } from "../../store";
 import styles from "./Navigation.module.css";
+import { useUserStore } from "../../store";
 
 function Navigation() {
   return (
     <div className={styles.navigation}>
       <div className={styles.logo}>Habit tracker</div>
+      <button
+        onClick={() => {
+          localStorage.removeItem("user");
+          useUserStore.setState(() => ({
+            isUserLogged: false,
+            currentUserId: undefined,
+          }));
+        }}
+      >
+        Wyloguj
+      </button>
       <button
         id="newHabitButton"
         className="button-secondary"

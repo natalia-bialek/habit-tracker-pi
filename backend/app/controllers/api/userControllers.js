@@ -1,4 +1,6 @@
 const User = require("../../db/models/user");
+const config = require("../../config.js");
+const jwt = require("jsonwebtoken");
 //const dateFnsTz = require("date-fns-tz");
 
 module.exports = {
@@ -53,7 +55,16 @@ module.exports = {
           .json({ message: "Invalid Password!", controller: "signIn" });
       }
 
-      res.status(200).json(user);
+      const token = jwt.sign({ _id: user._id }, config.SECRET, {
+        algorithm: "HS256",
+        allowInsecureKeySizes: true,
+        expiresIn: 86400, // 24 hours
+      });
+      res.status(200).json({
+        _id: user._id,
+        email: user.email,
+        accessToken: token,
+      });
     } catch (error) {
       return res
         .status(500)

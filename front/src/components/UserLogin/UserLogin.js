@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styles from "./UserLogin.module.css";
 import axios from "../../axios.js";
+import { useUserStore } from "../../store";
 
 function UserLogin() {
   const [email, setEmail] = useState("");
@@ -10,12 +11,20 @@ function UserLogin() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setErrorMessage("");
     const userObject = {
       email: email,
       password: password,
     };
     try {
       const res = await axios.post("/users/signin", userObject);
+      if (res.data.accessToken) {
+        localStorage.setItem("user", JSON.stringify(res.data));
+        useUserStore.setState(() => ({
+          isUserLogged: true,
+          currentUserId: res.data._id,
+        }));
+      }
     } catch (error) {
       console.error("LOGIN ERROR:", error.response.data.controller);
       setErrorMessage(error.response.data.message);

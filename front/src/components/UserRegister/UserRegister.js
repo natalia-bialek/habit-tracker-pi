@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styles from "./UserRegister.module.css";
 import axios from "../../axios.js";
+import { useUserStore } from "../../store";
 
 function UserRegister() {
   const [name, setName] = useState("");
@@ -11,6 +12,7 @@ function UserRegister() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setErrorMessage("");
     const userObject = {
       name: name,
       email: email,
@@ -18,7 +20,20 @@ function UserRegister() {
     };
     try {
       const res = await axios.post("/users/signup", userObject);
-      console.log(res.data);
+      await axios
+        .post("/users/signin", {
+          email: email,
+          password: password,
+        })
+        .then((res) => {
+          if (res.data.accessToken) {
+            localStorage.setItem("user", JSON.stringify(res.data));
+            useUserStore.setState(() => ({
+              isUserLogged: true,
+              currentUserId: res.data._id,
+            }));
+          }
+        });
     } catch (error) {
       console.error("REGISTER ERROR:", error.response.data.controller);
       setErrorMessage(error.response.data.message.message);

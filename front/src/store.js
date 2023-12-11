@@ -16,3 +16,8 @@ export const useHabitStore = create((set, get) => ({
     isDone: false,
   },
 }));
+
+export const useUserStore = create(() => ({
+  currentUserId: undefined,
+  isUserLogged: localStorage.getItem("user") || false,
+}));
