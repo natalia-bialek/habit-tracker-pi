@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 const crypto = require("crypto");
+const Habit = require("./habit");
 
 const validateEmail = function (email) {
   const pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -27,6 +28,7 @@ const UserSchema = new mongoose.Schema({
     ],
     maxLength: 100,
   },
+  habits: [Habit.schema],
   password: String,
   hash: String,
   salt: String,

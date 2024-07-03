@@ -1,9 +1,11 @@
 import axios from "../axios.js";
 import { useQuery } from "@tanstack/react-query";
+import { useUserStore } from "../store.js";
 
 export function useFetchHabits() {
+  const userId = useUserStore((state) => state.currentUserId);
   const fetchHabits = async () => {
-    const res = await axios.get("/habits");
+    const res = await axios.get(`/users/${userId}/habits`);
     return res.data;
   };
 

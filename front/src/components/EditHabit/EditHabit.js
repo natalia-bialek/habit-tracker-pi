@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./EditHabit.module.css";
 import { useHabit } from "../../hooks/useHabit";
 import { useUpdateHabit } from "../../hooks/useUpdateHabit";
-import { useHabitStore } from "../../store";
+import { useHabitStore, useUserStore } from "../../store";
 import axios from "../../axios.js";
 import { useMutation } from "@tanstack/react-query";
 import * as dateFnsTz from "date-fns-tz";
@@ -13,6 +13,8 @@ function EditHabit({ _id = "" }) {
   const data = useHabit(_id);
   const [habit, isLoading] = data;
   const editingHabit = useHabitStore((state) => state.editingHabit);
+  const userId = useUserStore((state) => state.currentUserId);
+  //console.log(useUserStore((state) => state));
 
   // initial values
   const [title, setTitle] = useState(habit?.title || "");
@@ -31,7 +33,8 @@ function EditHabit({ _id = "" }) {
 
   const mutation = useMutation({
     mutationFn: async (newHabit) => {
-      return await axios.post("/habits", newHabit);
+      console.log(`/users/${userId}/habits`);
+      return await axios.post(`/users/${userId}/habits`, newHabit);
     },
     onSuccess: (data) => {
       useHabitStore.setState({

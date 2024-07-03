@@ -12,11 +12,12 @@ module.exports = {
 
     let user;
 
-    //create new habit obj
+    //create new user
     try {
       user = new User({
         name: name,
         email: email,
+        habits: [],
       });
       user.setPassword(password);
 
@@ -44,7 +45,7 @@ module.exports = {
       if (!user) {
         return res
           .status(404)
-          .json({ message: "User Not found.", controller: "signIn" });
+          .json({ message: "Użytkownik nie istnieje", controller: "signIn" });
       }
 
       let passwordIsValid = user.validPassword(password);
@@ -52,7 +53,7 @@ module.exports = {
       if (!passwordIsValid) {
         return res
           .status(401)
-          .json({ message: "Invalid Password!", controller: "signIn" });
+          .json({ message: "Niewłaściwe hasło", controller: "signIn" });
       }
 
       const token = jwt.sign({ _id: user._id }, config.SECRET, {
@@ -71,38 +72,4 @@ module.exports = {
         .json({ message: error.message, controller: "signIn" });
     }
   },
-  /*
-  async updateHabit(req, res) {
-    //id from the URL
-    const id = req.params.id;
-
-    console.log(req.body);
-
-    //updated data
-    const title = req.body.title;
-    const goal = req.body.goal;
-    const repeat = req.body.repeat;
-    const isDone = req.body.isDone;
-    const createdDate = req.body.createdDate;
-
-    let habit;
-    try {
-      habit = await Habit.findOne({ _id: id });
-      habit.title = title;
-      habit.goal = goal;
-      habit.repeat = repeat;
-      habit.isDone = isDone;
-      habit.createdDate = createdDate;
-      await habit.save();
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ message: error.message, controller: "updateHabit" });
-    }
-    res.status(201).json(habit);
-  },
-
-
-
-  */
 };

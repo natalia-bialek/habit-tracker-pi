@@ -28,7 +28,7 @@ function HabitSummary({ habit }) {
         {habit.title}
       </h5>
 
-      <button className={styles.summary_button} onClick={handleMarkAsDone}>
+      <button className="button-primary" onClick={handleMarkAsDone}>
         {isMarkedDone ? (
           <>
             <FontAwesomeIcon icon={faCheck} /> Zrobione
