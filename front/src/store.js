@@ -14,6 +14,16 @@ export const useHabitStore = create((set, get) => ({
     },
     isDone: false,
   },
+  setShowingHabit: (newId) => {
+    console.log('newId useHabitStore', newId);
+    set(() => ({ showingHabit: { _id: newId, isVisible: true } }));
+  },
+  setEditingHabit: (newId, mode) => {
+    set(() => ({ editingHabit: { _id: newId, isVisible: true, mode: mode } }));
+  },
+  hideEditHabit: () => {
+    set(() => ({ editingHabit: { _id: undefined, isVisible: false, mode: undefined } }));
+  },
 }));
 
 export const useUserStore = create(() => ({
