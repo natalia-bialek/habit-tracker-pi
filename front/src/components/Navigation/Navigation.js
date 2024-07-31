@@ -1,7 +1,7 @@
-import React from "react";
-import { useHabitStore } from "../../store";
-import styles from "./Navigation.module.css";
-import { useUserStore } from "../../store";
+import React from 'react';
+import { useHabitStore } from '../../store';
+import styles from './Navigation.module.css';
+import { useUserStore } from '../../store';
 
 function Navigation() {
   return (
@@ -9,7 +9,7 @@ function Navigation() {
       <div className={styles.logo}>Habit tracker</div>
       <button
         onClick={() => {
-          localStorage.removeItem("user");
+          localStorage.removeItem('user');
           useUserStore.setState(() => ({
             isUserLogged: false,
             currentUserId: undefined,
@@ -19,11 +19,11 @@ function Navigation() {
         Wyloguj
       </button>
       <button
-        id="newHabitButton"
-        className="button-secondary"
+        id='newHabitButton'
+        className='button-secondary'
         onClick={() =>
           useHabitStore.setState({
-            editingHabit: { isVisible: true, mode: "addHabit" },
+            editingHabit: { isVisible: true, mode: 'add' },
           })
         }
       >
