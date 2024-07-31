@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import styles from "./HabitSummary.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { useHabitStore } from "../../store";
-import { useUpdateHabit } from "../../hooks/useUpdateHabit";
+import { useEffect, useState } from 'react';
+import styles from './HabitSummary.module.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { useHabitStore } from '../../store';
+import { useUpdateHabit } from '../../hooks/useUpdateHabit';
 function HabitSummary({ habit }) {
   const updateHabitMutation = useUpdateHabit(habit._id);
   const [isMarkedDone, setIsMarkedDone] = useState(habit.isDone);
@@ -12,6 +12,7 @@ function HabitSummary({ habit }) {
     useHabitStore.setState({
       showingHabit: { _id: habit._id, isVisible: true },
     });
+    console.log(useHabitStore.getState((state) => state.showingHabit));
   };
 
   const handleMarkAsDone = async () => {
@@ -28,13 +29,13 @@ function HabitSummary({ habit }) {
         {habit.title}
       </h5>
 
-      <button className="button-primary" onClick={handleMarkAsDone}>
+      <button className='button-primary' onClick={handleMarkAsDone}>
         {isMarkedDone ? (
           <>
             <FontAwesomeIcon icon={faCheck} /> Zrobione
           </>
         ) : (
-          "Do zrobienia"
+          'Do zrobienia'
         )}
       </button>
     </div>

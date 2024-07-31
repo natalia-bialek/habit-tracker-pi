@@ -1,6 +1,6 @@
-import axios from "../axios.js";
-import { useQuery } from "@tanstack/react-query";
-import { useUserStore } from "../store.js";
+import axios from '../axios.js';
+import { useQuery } from '@tanstack/react-query';
+import { useUserStore } from '../store.js';
 
 export function useFetchHabits() {
   const userId = useUserStore((state) => state.currentUserId);
@@ -9,9 +9,9 @@ export function useFetchHabits() {
     return res.data;
   };
 
-  const { isLoading, isError, data, error } = useQuery(["habits"], fetchHabits);
+  const { isLoading, isError, data, error } = useQuery(['habits'], fetchHabits);
 
-  if (isError) console.error("ERROR: ", error.message);
+  if (isError) console.error('ERROR: ', error.message);
 
   return [data, isLoading];
 }

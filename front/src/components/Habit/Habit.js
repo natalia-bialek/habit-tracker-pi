@@ -7,6 +7,7 @@ import axios from '../../axios.js';
 
 function Habit({ _id }) {
   const [habit, isLoading] = useHabit(_id);
+  console.log(habit)
   const deleteHabitMutation = useDeleteHabit();
 
   const editHandler = () => {
@@ -35,7 +36,7 @@ function Habit({ _id }) {
           </button>
           <h5 className={styles.habit__header}>{habit.title || ''}</h5>
 
-          {/* <div className={styles.habit__details}>
+          <div className={styles.habit__details}>
             Cel:
             <span className={styles.habit__description}>{habit.goal.amount || 1}</span>
             <span className={styles.habit__description}>{habit.goal.unit || 'razy'}</span>
@@ -43,7 +44,7 @@ function Habit({ _id }) {
             <span className={styles.habit__description}>{habit.goal.frequency || 'dzień'}</span>
             <p className={styles.habit__description}>Przypominaj {habit.repeat || 'codziennie'}</p>
           </div>
-          <div className={styles.habit__created_date}>{habit.createdDate || null}</div> */}
+          <div className={styles.habit__created_date}>{habit.createdDate || null}</div>
 
           <div className='buttons-container'>
             <button className='button-secondary' onClick={deleteHandler}>

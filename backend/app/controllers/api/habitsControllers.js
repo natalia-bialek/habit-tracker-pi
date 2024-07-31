@@ -38,7 +38,6 @@ module.exports = {
 
   async getAllHabits(req, res) {
     const userId = req.params.userId;
-
     let user;
     try {
       user = await User.findById(userId).select('habits');
@@ -54,17 +53,13 @@ module.exports = {
 
   async getHabit(req, res) {
     const { userId, habitId } = req.params;
-    console.log(req.params);
     try {
       const user = await User.findById(userId);
-      // console.log('find user', user);
+
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-      // console.log('find habits', user.habits, typeof user.habits);
-      const habits = user.habits;
-      console.log(user.habits);
-      const habit = habits.find({ title: 'test' });
+      const habit = user.habits.find((habit) => habit._id.toString() === habitId);
 
       if (!habit) {
         return res.status(404).json({ message: 'Habit not found' });

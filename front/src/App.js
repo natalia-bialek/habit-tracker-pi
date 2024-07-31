@@ -11,8 +11,7 @@ import UserLogin from './components/UserLogin/UserLogin.js';
 
 function App() {
   const loggedUser = useUserStore((state) => state.isUserLogged);
-  console.log(useUserStore((state) => state));
-  const showingHabit = useHabitStore((state) => state.showingHabit);
+  let showingHabit = useHabitStore((state) => state.showingHabit);
   const editingHabit = useHabitStore((state) => state.editingHabit);
 
   const [isUserRegisterActive, setIsUserRegisterActive] = useState(true);
