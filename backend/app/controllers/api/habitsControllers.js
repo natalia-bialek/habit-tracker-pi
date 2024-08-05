@@ -107,7 +107,7 @@ module.exports = {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      user.habits.id(habitId).remove();
+      user.habits = user.habits.filter((habit) => habit._id.toString() !== habitId);
       await user.save();
 
       res.sendStatus(204);
