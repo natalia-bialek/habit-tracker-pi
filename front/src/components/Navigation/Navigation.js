@@ -21,7 +21,7 @@ function Navigation() {
             id='newHabitButton'
             className='button-secondary'
             onClick={() => {
-              setEditingHabit(showingHabit._id, 'edit');
+              setEditingHabit(showingHabit._id, 'add');
               hideShowingHabit();
             }}
           >
