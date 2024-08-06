@@ -10,6 +10,8 @@ function UserRegister() {
 
   const [errorMessage, setErrorMessage] = useState('');
 
+  const loginUser = useUserStore((state) => state.loginUser);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage('');
@@ -27,7 +29,7 @@ function UserRegister() {
         })
         .then((res) => {
           if (res.data.accessToken) {
-            localStorage.setItem('user', JSON.stringify(res.data));
+            loginUser(res.data._id);
           }
         });
     } catch (error) {
