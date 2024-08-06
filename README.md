@@ -34,6 +34,6 @@ Needs backend .env file
 - [ ] Reset isDone after a certain amount of time
 - [ ] Count strike 
 - [ ] Chart based on strike 
-- [ ] User authentication
-- [ ] Log in/log out feature
+- [x] User authentication
+- [x] Log in/log out feature
 - [ ] Change user password feature
