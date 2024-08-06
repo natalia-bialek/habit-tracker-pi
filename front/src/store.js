@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import axios from './axios.js';
 
-export const useHabitStore = create((set, get) => ({
+export const useHabitStore = create((set) => ({
   showingHabit: { _id: undefined, isVisible: false },
   editingHabit: { _id: undefined, isVisible: false, mode: undefined },
   initialHabit: {
@@ -15,7 +15,6 @@ export const useHabitStore = create((set, get) => ({
     isDone: false,
   },
   setShowingHabit: (newId, isVisible) => {
-    console.log('newId useHabitStore', newId);
     set(() => ({ showingHabit: { _id: newId, isVisible: isVisible } }));
   },
   hideShowingHabit: () => {
@@ -30,7 +29,7 @@ export const useHabitStore = create((set, get) => ({
 }));
 
 export const useUserStore = create((set) => ({
-  currentUserId: JSON.parse(localStorage.getItem('user'))?._id || undefined,
+  currentUserId: localStorage.getItem('user') || undefined,
   isUserLogged: localStorage.getItem('user') ? true : false,
   loginUser: (data) => {
     localStorage.setItem('user', data);

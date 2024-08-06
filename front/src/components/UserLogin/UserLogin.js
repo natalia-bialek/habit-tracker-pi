@@ -9,6 +9,8 @@ function UserLogin() {
 
   const [errorMessage, setErrorMessage] = useState('');
 
+  const loginUser = useUserStore((state) => state.loginUser);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage('');
@@ -19,7 +21,7 @@ function UserLogin() {
     try {
       const res = await axios.post('/users/signin', userObject);
       if (res.data.accessToken) {
-        localStorage.setItem('user', JSON.stringify(res.data));
+        loginUser(res.data._id);
       }
     } catch (error) {
       console.error('LOGIN ERROR:', error.response.data.controller);
