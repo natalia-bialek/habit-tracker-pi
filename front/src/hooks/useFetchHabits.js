@@ -1,21 +1,17 @@
-import axios from "../axios.js";
-import { useEffect, useState } from "react";
+import axios from '../axios.js';
+import { useQuery } from '@tanstack/react-query';
+import { useUserStore } from '../store.js';
 
 export function useFetchHabits() {
-  const [habits, setHabits] = useState([]);
+  const userId = useUserStore((state) => state.currentUserId);
+  const fetchHabits = async () => {
+    const res = await axios.get(`/users/${userId}/habits`);
+    return res.data;
+  };
 
-  useEffect(() => {
-    async function fetch() {
-      try {
-        const results = await axios.get("/habits");
-        setHabits(results.data);
-      } catch (error) {
-        return error.data;
-      }
-    }
-    if (!habits.length) {
-      fetch();
-    }
-  }, [habits]);
-  return habits;
+  const { isLoading, isError, data, error } = useQuery(['habits'], fetchHabits);
+
+  if (isError) console.error('ERROR: ', error.message);
+
+  return [data, isLoading];
 }

@@ -1,18 +1,21 @@
-import { useCallback, useEffect } from "react";
-import axios from "../axios.js";
-import { useFetchHabits } from "./useFetchHabits.js";
+import axios from '../axios.js';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useHabitStore, useUserStore } from '../store.js';
 
-export function useDeleteHabit(id) {
-  const d = useCallback(
-    async function (id) {
-      console.log("useDeleteHabit", id);
-      try {
-        axios.delete("/habits/" + id);
-      } catch (error) {
-        return error.data;
-      }
+export function useDeleteHabit() {
+  const queryClient = useQueryClient();
+  const userId = useUserStore((state) => state.currentUserId);
+  const setShowingHabit = useHabitStore((state) => state.setShowingHabit);
+
+  const mutation = useMutation({
+    mutationFn: async (habitId) => {
+      axios.delete(`/users/${userId}/habits/` + habitId);
     },
-    [id]
-  );
-  return d;
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['habits'] });
+      setShowingHabit(undefined, false);
+    },
+  });
+
+  return mutation;
 }
