@@ -8,12 +8,7 @@ function HabitSummary({ habit }) {
   const updateHabitMutation = useUpdateHabit(habit._id);
   const [isMarkedDone, setIsMarkedDone] = useState(habit.isDone);
 
-  const sendIdToTheStore = () => {
-    useHabitStore.setState({
-      showingHabit: { _id: habit._id, isVisible: true },
-    });
-    console.log(useHabitStore.getState((state) => state.showingHabit));
-  };
+  const setShowingHabit = useHabitStore((state) => state.setShowingHabit);
 
   const handleMarkAsDone = async () => {
     setIsMarkedDone(!isMarkedDone);
@@ -25,7 +20,7 @@ function HabitSummary({ habit }) {
 
   return (
     <div className={styles.summary}>
-      <h5 onClick={() => sendIdToTheStore()} className={styles.summary_header}>
+      <h5 onClick={() => setShowingHabit(habit._id, true)} className={styles.summary_header}>
         {habit.title}
       </h5>
 

@@ -40,7 +40,7 @@ module.exports = {
     const userId = req.params.userId;
     let user;
     try {
-      user = await User.findById(userId).select('habits');
+      user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }

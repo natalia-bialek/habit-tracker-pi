@@ -9,7 +9,7 @@ export function useHabit(habitId) {
     return res.data;
   };
 
-  const { isLoading, isError, data, error } = useQuery(['habit'], fetchHabit);
+  const { isLoading, isError, data, error } = useQuery(['habit', habitId], fetchHabit);
 
   if (isError) {
     console.error(error.message);

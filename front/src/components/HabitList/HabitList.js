@@ -13,10 +13,12 @@ function HabitList() {
         <div className={styles.habitList}>
           <div className={styles.toDoHabitList}>
             <h3>Pora na:</h3>
-            {habits.map((object, key = object.id) => {
-              if (object && object.isDone === false)
-                return <HabitSummary key={key} habit={object} />;
-            })}
+            {habits.length > 0 &&
+              habits.map((object, key = object.id) => {
+                if (object && object.isDone === false)
+                  return <HabitSummary key={key} habit={object} />;
+              })}
+            {!habits.length && 'Dodaj nowy nawyk!'}
           </div>
           <div className={styles.completedHabitList}>
             <h3>Odhaczone:</h3>

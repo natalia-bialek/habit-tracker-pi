@@ -13,9 +13,7 @@ import UserLogin from './components/UserLogin/UserLogin.js';
 function App() {
   const loggedUser = useUserStore((state) => state.isUserLogged);
   const showingHabit = useHabitStore((state) => state.showingHabit);
-  console.log(showingHabit);
   const editingHabit = useHabitStore((state) => state.editingHabit);
-  console.log(editingHabit);
 
   const [isUserRegisterActive, setIsUserRegisterActive] = useState(true);
 
@@ -26,7 +24,7 @@ function App() {
         <div className={styles.HabitListContainer}>
           <HabitList />
           <div className={styles.onlyHabit}>
-            {showingHabit.isVisible && <Habit _id={showingHabit._id} />}
+            {showingHabit.isVisible && showingHabit._id && <Habit />}
           </div>
           {editingHabit.mode === 'edit' && editingHabit.isVisible && (
             <EditHabit _id={editingHabit._id} />
@@ -35,7 +33,7 @@ function App() {
         </div>
       ) : (
         <div className={styles.UserContainer}>
-          {isUserRegisterActive ? <UserRegister /> : <UserLogin />}
+          {isUserRegisterActive ? <UserLogin /> : <UserRegister />}
           <button
             className='button-inline'
             onClick={() => setIsUserRegisterActive(!isUserRegisterActive)}
