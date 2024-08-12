@@ -7,7 +7,9 @@
   max-height: calc(100vh - 70px);
 }
 
-.completedHabitList h3,
-.toDoHabitList h3 {
-  margin-bottom: 10px;
+.habitList__inner {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }

@@ -11,7 +11,7 @@ function HabitList() {
       {isLoading && 'Ładowanie...'}
       {habits && (
         <div className={styles.habitList}>
-          <div className={styles.toDoHabitList}>
+          <div className={styles.habitList__inner}>
             <h3>Pora na:</h3>
             {habits.length > 0 &&
               habits.map((object, key = object.id) => {
@@ -20,7 +20,7 @@ function HabitList() {
               })}
             {!habits.length && 'Dodaj nowy nawyk!'}
           </div>
-          <div className={styles.completedHabitList}>
+          <div className={styles.habitList__inner}>
             <h3>Odhaczone:</h3>
             {habits.map((object, key = object.id) => {
               if (object && object.isDone) return <HabitSummary key={key} habit={object} />;
