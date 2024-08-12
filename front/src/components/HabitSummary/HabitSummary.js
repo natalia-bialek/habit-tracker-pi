@@ -59,7 +59,13 @@ function HabitSummary({ habit }) {
         onMouseEnter={() => setButtonText('Kliknij, aby zmienić')} // Change text on hover
         onMouseLeave={() => setButtonText(isMarkedDone ? 'Zrobione' : 'Do zrobienia')} // Reset text after hover
       >
-        {buttonText}
+        {buttonText === 'Zrobione' ? (
+          <>
+            <FontAwesomeIcon icon={faCheck} /> Zrobione
+          </>
+        ) : (
+          buttonText
+        )}
       </button>
     </div>
   );
