@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const HabitSchema = new mongoose.Schema({
   title: {
@@ -13,26 +13,31 @@ const HabitSchema = new mongoose.Schema({
     },
     unit: {
       type: String,
-      enum: ["razy", "min"],
-      default: "razy",
+      enum: ['razy', 'min'],
+      default: 'razy',
       required: true,
     },
     frequency: {
       type: String,
-      enum: ["dzień", "tydzień", "miesiąc"],
-      default: "dzień",
+      enum: ['dzień', 'tydzień', 'miesiąc'],
+      default: 'dzień',
       required: true,
     },
   },
   repeat: {
     type: String,
-    enum: ["codziennie", "co tydzień", "co miesiąc"],
-    default: "codziennie",
+    enum: ['codziennie', 'co tydzień', 'co miesiąc'],
+    default: 'codziennie',
     required: true,
   },
   isDone: {
     type: Boolean,
     required: true,
+  },
+  progress: {
+    type: Number,
+    min: 0,
+    default: 0,
   },
   createdDate: {
     type: String,
@@ -44,6 +49,6 @@ const HabitSchema = new mongoose.Schema({
   // },
 });
 
-const Habit = mongoose.model("Habit", HabitSchema);
+const Habit = mongoose.model('Habit', HabitSchema);
 
 module.exports = Habit;
