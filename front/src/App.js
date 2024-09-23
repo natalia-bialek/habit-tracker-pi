@@ -38,7 +38,7 @@ function App() {
             className='button-inline'
             onClick={() => setIsUserRegisterActive(!isUserRegisterActive)}
           >
-            {isUserRegisterActive ? 'Mam już konto' : 'Chcę utworzyć konto'}
+            {isUserRegisterActive ? 'Chcę utworzyć konto' : 'Mam już konto'}
           </button>
         </div>
       )}
