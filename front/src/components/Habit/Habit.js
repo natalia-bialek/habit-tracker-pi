@@ -35,21 +35,13 @@ function Habit() {
 
           <div className={styles.habit__details}>
             Cel:
-            <span className={styles.habit__description}>
-              {habit.goal.amount || initialHabit.goal.amount}
-            </span>
-            <span className={styles.habit__description}>
-              {habit.goal.unit || initialHabit.goal.unit}
-            </span>
+            <span>{habit.goal.amount || initialHabit.goal.amount}</span>
+            <span>{habit.goal.unit || initialHabit.goal.unit}</span>
             na
-            <span className={styles.habit__description}>
-              {habit.goal.frequency || initialHabit.goal.frequency}
-            </span>
-            <p className={styles.habit__description}>
-              Przypominaj {habit.repeat || initialHabit.repeat}
-            </p>
+            <span>{habit.goal.frequency || initialHabit.goal.frequency}</span>
           </div>
-          <div className={styles.habit__created_date}>{habit.createdDate || null}</div>
+          
+          <div className={styles.habit__created_date}>Utworzono: {habit.createdDate || null}</div>
 
           <div className='buttons-container'>
             <button className='button-secondary' onClick={deleteHandler}>

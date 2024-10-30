@@ -12,6 +12,7 @@ export const useHabitStore = create((set) => ({
       unit: 'razy',
       frequency: 'dzień',
     },
+    progress: 0,
     isDone: false,
   },
   setShowingHabit: (newId, isVisible) => {

@@ -4,12 +4,14 @@
   padding: 20px 10px;
   display: flex;
   flex-direction: column;
-  background-color: #f4f4f4;
+  background-color: #ebebeb;
   grid-area: single;
   position: relative;
   padding: 20px;
   max-height: 200px;
   justify-content: space-between;
+  margin-top: 20px;
+  border-radius: 8px;
 }
 .habit__button_close {
   position: absolute;
@@ -19,7 +21,7 @@
   font-weight: 800;
 }
 .habit__header {
-  font-family: "Monserrat", sans-serif;
+  font-family: 'Monserrat', sans-serif;
   text-transform: uppercase;
   font-size: 18px;
   font-weight: 600;
@@ -28,14 +30,16 @@
 }
 .habit__details {
   display: flex;
+  gap: 3px;
 }
 .habit__description {
   font-size: 16px;
   padding: 0 3px;
 }
-.habit__description:last-child {
-  margin-left: auto;
-  margin-right: 0;
+
+.habit__created_date {
+  margin-top: 20px;
+  font-size: 12px;
 }
 
 /*# sourceMappingURL=Habit.module.css.map */

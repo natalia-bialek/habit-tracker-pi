@@ -23,6 +23,7 @@ function EditHabit({ _id = '' }) {
   // initial values
   const [title, setTitle] = useState(habit?.title || initialHabit.title);
   const [repeat, setRepeat] = useState(habit?.repeat || initialHabit.repeat);
+  const [progress, setProgress] = useState(habit?.progress || initialHabit.progress);
   const [isDone, setIsDone] = useState(habit?.isDone || initialHabit.isDone);
 
   const [amount, setAmount] = useState(habit?.goal?.amount || initialHabit.goal.amount);
@@ -57,6 +58,7 @@ function EditHabit({ _id = '' }) {
         unit: unit,
         frequency: frequency,
       },
+      progress: progress,
       createdDate: createdDate,
     });
   };
@@ -71,6 +73,7 @@ function EditHabit({ _id = '' }) {
         unit: unit,
         frequency: frequency,
       },
+      progress: progress,
       createdDate: createdDate,
     };
     mutation.mutate(newHabit);

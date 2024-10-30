@@ -5,7 +5,7 @@ const dateFnsTz = require('date-fns-tz');
 module.exports = {
   async createNewHabit(req, res) {
     const userId = req.params.userId;
-    const { title, goal, repeat, isDone } = req.body;
+    const { title, goal, repeat, isDone, progress } = req.body;
     const createdDate = dateFnsTz.format(new Date(), 'dd-MM-yyyy HH:mm', {
       timeZone: 'Europe/Warsaw',
     });
@@ -24,6 +24,7 @@ module.exports = {
         goal,
         repeat,
         isDone,
+        progress,
         createdDate,
       };
 
@@ -73,7 +74,7 @@ module.exports = {
 
   async updateHabit(req, res) {
     const { userId, habitId } = req.params;
-    const { title, goal, repeat, isDone, createdDate } = req.body;
+    const { title, goal, repeat, isDone, progress, createdDate } = req.body;
 
     try {
       const user = await User.findById(userId);
@@ -90,6 +91,7 @@ module.exports = {
       habit.goal = goal;
       habit.repeat = repeat;
       habit.isDone = isDone;
+      habit.progress = progress;
       habit.createdDate = createdDate;
 
       await user.save();
