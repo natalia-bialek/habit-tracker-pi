@@ -48,3 +48,8 @@
   display: block;
   position: absolute;
 }
+
+.summary button {
+  justify-content: center;
+  gap: 20px;
+}
