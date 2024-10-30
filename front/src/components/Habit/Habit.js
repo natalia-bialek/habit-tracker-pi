@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import styles from './Habit.module.css';
 import { useHabit } from '../../hooks/useHabit';
 import { useHabitStore, useUserStore } from '../../store';
 import { useDeleteHabit } from '../../hooks/useDeleteHabit';
-import axios from '../../axios.js';
+import classNames from 'classnames';
 
 function Habit() {
   const showingHabitId = useHabitStore((state) => state.showingHabit._id);
@@ -28,19 +27,25 @@ function Habit() {
       {isLoading && 'Loading...'}
       {habit && (
         <div className={styles.habit}>
-          <button className={styles.habit__button_close} onClick={closeHandler}>
-            X
-          </button>
-          <h5 className={styles.habit__header}>{habit.title || initialHabit.title}</h5>
+          <div className={classNames(styles.habit__container, styles['habit__container--row'])}>
+            <h5 className={`${styles.habit__header} truncate`}>
+              {habit.title || initialHabit.title}
+            </h5>
+            <button className={styles.habit__close} onClick={closeHandler}>
+              X
+            </button>
+          </div>
 
-          <div className={styles.habit__details}>
-            Cel:
+          <div className={styles.habit__container}>
+            <strong>Cel:</strong>
             <span>{habit.goal.amount || initialHabit.goal.amount}</span>
             <span>{habit.goal.unit || initialHabit.goal.unit}</span>
             na
             <span>{habit.goal.frequency || initialHabit.goal.frequency}</span>
           </div>
-          
+          <div className={styles.habit__help_text}>
+            Aby edytować m.in. progress, wejdź w tryb edycji.
+          </div>
           <div className={styles.habit__created_date}>Utworzono: {habit.createdDate || null}</div>
 
           <div className='buttons-container'>

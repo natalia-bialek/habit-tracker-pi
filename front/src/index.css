@@ -20,7 +20,7 @@ input {
   border: 0;
   border-bottom: 1px solid #49274a;
   outline: 0;
-  padding: 2px 0;
+  padding: 4px 0;
   background: transparent;
   font-family: 'Montserrat', sans-serif;
 }
@@ -64,7 +64,7 @@ button {
   letter-spacing: 0.1em;
   padding: 17px 10px 15px 10px;
   outline: none;
-  border: none;
+  border: 2px solid transparent;
   border-radius: 4px;
   cursor: pointer;
   display: flex;
@@ -76,10 +76,15 @@ button {
   max-height: 45px;
   margin: auto 0;
   line-height: 1;
+  transition: all 0.2s ease-in;
 }
 
 button:active {
   box-shadow: inset 0px 0px 24px -12px rgba(66, 68, 90, 1);
+}
+
+button:hover {
+  border: 1px solid rgba(116, 118, 143, 0.432);
 }
 
 .buttons-container {
@@ -95,7 +100,6 @@ button:active {
 .button-primary {
   background-color: #34526f;
   color: #dedede;
-  transition: background-color 0.2s ease-in, box-shadow 0.2s ease-in;
   text-decoration: none;
 }
 
@@ -106,9 +110,8 @@ button:active {
 
 .button-secondary {
   background-color: transparent;
-  border: 2px solid #34526f;
+  border-color: #34526f;
   color: #263d52;
-  transition: background-color 0.2s ease-in, color 0.2s ease-in, box-shadow 0.2s ease-in;
   text-decoration: none;
 }
 
@@ -123,6 +126,13 @@ button:active {
   text-transform: uppercase;
   font-weight: 700;
   display: block;
+  margin-bottom: 10px;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* 

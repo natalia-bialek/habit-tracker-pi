@@ -42,7 +42,9 @@ function HabitSummary({ habit }) {
   return (
     <div className={styles.summary}>
       <div className={styles.summary__header}>
-        <h5 onClick={() => setShowingHabit(habit._id, true)}>{habit.title}</h5>
+        <h5 onClick={() => setShowingHabit(habit._id, true)} className='truncate'>
+          {habit.title}
+        </h5>
         <div className={styles.summary__progress}>
           <div className={styles.summary__progress_bar}>
             <span style={{ width: `${progressPercentage}%` }}></span>
@@ -56,8 +58,10 @@ function HabitSummary({ habit }) {
       <button
         className='button-primary'
         onClick={handleMarkAsDone}
-        onMouseEnter={() => setButtonText('Kliknij, aby zmienić')} // Change text on hover
-        onMouseLeave={() => setButtonText(isMarkedDone ? 'Zrobione' : 'Do zrobienia')} // Reset text after hover
+        onMouseEnter={() => !isMarkedDone && setButtonText('Kliknij, aby zmienić')} // Change text on hover
+        onMouseLeave={() =>
+          !isMarkedDone && setButtonText(isMarkedDone ? 'Zrobione' : 'Do zrobienia')
+        } // Change text on hover
       >
         {buttonText === 'Zrobione' ? (
           <>

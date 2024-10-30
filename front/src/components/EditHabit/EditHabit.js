@@ -52,7 +52,7 @@ function EditHabit({ _id = '' }) {
     updateHabitMutation.mutate({
       title: title,
       repeat: repeat,
-      isDone: isDone,
+      isDone: progress < amount ? false : true,
       goal: {
         amount: amount,
         unit: unit,
@@ -96,6 +96,8 @@ function EditHabit({ _id = '' }) {
               id='input_title'
               type='text'
               name='title'
+              minLength='1'
+              maxLength='50'
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -134,19 +136,20 @@ function EditHabit({ _id = '' }) {
             </select>
           </div>
 
-          <div>
-            <label>Przypominaj:</label>
-            <select
-              id='select_repeat'
-              name='repeat'
-              onChange={(e) => setRepeat(e.target.value)}
-              value={repeat}
-            >
-              <option value='codziennie'>Codziennie</option>
-              <option value='co tydzień'>Co tydzień</option>
-              <option value='co miesiąc'>Co miesiąc</option>
-            </select>
-          </div>
+          {editingHabit.mode === 'edit' && (
+            <div>
+              <label>Progress:</label>
+              <input
+                type='number'
+                name='progress'
+                value={progress}
+                onChange={(e) => setProgress(e.target.value)}
+                min='1'
+                max='1000'
+              ></input>{' '}
+              &nbsp;/&nbsp; {amount}
+            </div>
+          )}
 
           <div className='buttons-container'>
             <button type='button' className='button-secondary' onClick={() => hideEditHabit()}>
