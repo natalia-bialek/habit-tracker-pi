@@ -1,15 +1,15 @@
 .habitList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 32px;
   grid-area: list;
-  overflow-y: scroll;
-  max-height: calc(100vh - 70px);
+  overflow-y: auto;
+  max-height: 100%;
+  padding-bottom: 8px;
 }
 
 .habitList__inner {
-  margin-top: 10px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 16px;
 }

@@ -2,6 +2,9 @@ import React from 'react';
 import { useHabitStore } from '../../store';
 import styles from './Navigation.module.css';
 import { useUserStore } from '../../store';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import classNames from 'classnames';
 
 function Navigation() {
   const loggedUser = useUserStore((state) => state.isUserLogged);
@@ -13,18 +16,21 @@ function Navigation() {
 
   return (
     <div className={styles.navigation}>
-      <div className={styles.logo}>Habit tracker</div>
+      <h1 className={styles.navigation__logo}>Habit tracker</h1>
       {loggedUser && (
         <>
-          <button onClick={() => logoutUser()}>Wyloguj</button>
+          <button className={styles.navigation__logout} onClick={() => logoutUser()}>
+            Wyloguj
+          </button>
           <button
             id='newHabitButton'
-            className='button-secondary'
+            className={classNames(styles.navigation__add, 'button-secondary')}
             onClick={() => {
               setEditingHabit(showingHabit._id, 'add');
               hideShowingHabit();
             }}
           >
+            <FontAwesomeIcon icon={faPlus} />
             Dodaj nawyk
           </button>
         </>

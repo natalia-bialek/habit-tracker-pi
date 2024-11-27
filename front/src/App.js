@@ -18,21 +18,19 @@ function App() {
   const [isUserRegisterActive, setIsUserRegisterActive] = useState(true);
 
   return (
-    <div className={styles.App}>
+    <div className={styles.app}>
       <Navigation />
       {loggedUser ? (
-        <div className={styles.HabitListContainer}>
+        <div className={styles.app__habits}>
           <HabitList />
-          <div className={styles.onlyHabit}>
-            {showingHabit.isVisible && showingHabit._id && <Habit />}
-          </div>
+          {showingHabit.isVisible && showingHabit._id && <Habit />}
           {editingHabit.mode === 'edit' && editingHabit.isVisible && (
             <EditHabit _id={editingHabit._id} />
           )}
           {editingHabit.mode === 'add' && editingHabit.isVisible && <EditHabit />}
         </div>
       ) : (
-        <div className={styles.UserContainer}>
+        <div className={styles.app__users}>
           {isUserRegisterActive ? <UserLogin /> : <UserRegister />}
           <button
             className='button-inline'
@@ -42,6 +40,7 @@ function App() {
           </button>
         </div>
       )}
+      {showingHabit.isVisible && showingHabit._id && <div className={styles.app__overlay}></div>}
     </div>
   );
 }

@@ -16,6 +16,7 @@ function HabitSummary({ habit }) {
   );
   const goalAmount = habit.goal.amount;
   const setShowingHabit = useHabitStore((state) => state.setShowingHabit);
+  const isOverlayVisible = useHabitStore((state) => state.isOverlayVisible);
 
   const handleMarkAsDone = async () => {
     if (progress + 1 <= goalAmount) {
@@ -42,9 +43,15 @@ function HabitSummary({ habit }) {
   return (
     <div className={styles.summary}>
       <div className={styles.summary__header}>
-        <h5 onClick={() => setShowingHabit(habit._id, true)} className='truncate'>
+        <h3
+          onClick={() => {
+            setShowingHabit(habit._id, true);
+            isOverlayVisible(true);
+          }}
+          className='truncate'
+        >
           {habit.title}
-        </h5>
+        </h3>
         <div className={styles.summary__progress}>
           <div className={styles.summary__progress_bar}>
             <span style={{ width: `${progressPercentage}%` }}></span>

@@ -6,6 +6,7 @@ import { useHabitStore, useUserStore } from '../../store';
 import axios from '../../axios.js';
 import { useMutation } from '@tanstack/react-query';
 import * as dateFnsTz from 'date-fns-tz';
+import classNames from 'classnames';
 
 function EditHabit({ _id = '' }) {
   const updateHabitMutation = useUpdateHabit(_id);
@@ -87,71 +88,81 @@ function EditHabit({ _id = '' }) {
           className={styles.editHabit}
           onSubmit={editingHabit.mode === 'edit' ? handleEditSubmit : handleAddSubmit}
         >
-          <h2 className={styles.editHabit_header}>
-            {editingHabit.mode === 'edit' ? 'Edytuj nawyk' : 'Dodaj nowy nawyk'}
-          </h2>
-          <div className={styles.editHabit_title}>
-            <label>Tytuł:</label>
-            <input
-              id='input_title'
-              type='text'
-              name='title'
-              minLength='1'
-              maxLength='50'
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-          <div className={styles.goal_container}>
-            <label>Cel:</label>
-            <input
-              id='input_amount'
-              type='number'
-              name='amount'
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              min='1'
-              max='1000'
-            />
-
-            <select
-              id='select_unit'
-              name='unit'
-              onChange={(e) => setUnit(e.target.value)}
-              value={unit}
-            >
-              <option value='razy'>Razy</option>
-              <option value='min'>Min</option>
-            </select>
-            <p>na</p>
-            <select
-              id='select_frequency'
-              name='frequency'
-              onChange={(e) => setFrequency(e.target.value)}
-              value={frequency}
-            >
-              <option value='dzień'>Dzień</option>
-              <option value='tydzień'>Tydzień</option>
-              <option value='miesiąc'>Miesiąc</option>
-            </select>
+          <div className={styles.editHabit__top}>
+            <h2 className={styles.editHabit_header}>
+              {editingHabit.mode === 'edit' ? 'Edytuj nawyk' : 'Dodaj nowy nawyk'}
+            </h2>
           </div>
 
-          {editingHabit.mode === 'edit' && (
-            <div>
-              <label>Progress:</label>
+          <div className={styles.editHabit__middle}>
+            <div className={classNames(styles.editHabit__field)}>
+              <label>Tytuł</label>
               <input
-                type='number'
-                name='progress'
-                value={progress}
-                onChange={(e) => setProgress(e.target.value)}
-                min='1'
-                max='1000'
-              ></input>{' '}
-              &nbsp;/&nbsp; {amount}
+                id='input_title'
+                className={styles.editHabit__input}
+                type='text'
+                name='title'
+                minLength='1'
+                maxLength='50'
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
             </div>
-          )}
+            <div className={classNames(styles.editHabit__field)}>
+              <label>Cel</label>
+              <div className={styles.editHabit__goal}>
+                <input
+                  id='input_amount'
+                  type='number'
+                  name='amount'
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  min='1'
+                  max='1000'
+                />
 
-          <div className='buttons-container'>
+                <select
+                  id='select_unit'
+                  name='unit'
+                  onChange={(e) => setUnit(e.target.value)}
+                  value={unit}
+                >
+                  <option value='razy'>Razy</option>
+                  <option value='min'>Min</option>
+                </select>
+                <p>na</p>
+                <select
+                  id='select_frequency'
+                  name='frequency'
+                  onChange={(e) => setFrequency(e.target.value)}
+                  value={frequency}
+                >
+                  <option value='dzień'>Dzień</option>
+                  <option value='tydzień'>Tydzień</option>
+                  <option value='miesiąc'>Miesiąc</option>
+                </select>
+              </div>
+            </div>
+
+            {editingHabit.mode === 'edit' && (
+              <div className={styles.editHabit__field}>
+                <label>Progress</label>
+                <span>
+                  <input
+                    type='number'
+                    name='progress'
+                    value={progress}
+                    onChange={(e) => setProgress(e.target.value)}
+                    min='0'
+                    max='1000'
+                  ></input>{' '}
+                  &nbsp;/&nbsp; {amount}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className={styles.editHabit__bottom}>
             <button type='button' className='button-secondary' onClick={() => hideEditHabit()}>
               Anuluj
             </button>

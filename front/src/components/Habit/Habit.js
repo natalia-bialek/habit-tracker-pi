@@ -2,6 +2,8 @@ import styles from './Habit.module.css';
 import { useHabit } from '../../hooks/useHabit';
 import { useHabitStore, useUserStore } from '../../store';
 import { useDeleteHabit } from '../../hooks/useDeleteHabit';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faX } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 
 function Habit() {
@@ -26,37 +28,41 @@ function Habit() {
     <>
       {isLoading && 'Loading...'}
       {habit && (
-        <div className={styles.habit}>
-          <div className={classNames(styles.habit__container, styles['habit__container--row'])}>
-            <h5 className={`${styles.habit__header} truncate`}>
-              {habit.title || initialHabit.title}
-            </h5>
-            <button className={styles.habit__close} onClick={closeHandler}>
-              X
-            </button>
+        <>
+          <div className={styles.habit}>
+            <div className={styles.habit__top}>
+              <h4 className={classNames(styles.habit__header, 'truncate')}>
+                {habit.title || initialHabit.title}
+              </h4>
+              <button className={styles.habit__close} onClick={closeHandler}>
+                <FontAwesomeIcon icon={faX} />
+              </button>
+            </div>
+            <div className={styles.habit__middle}>
+              <div className={styles.habit__goal}>
+                <strong>Cel:</strong>
+                <span>{habit.goal.amount || initialHabit.goal.amount}</span>
+                <span>{habit.goal.unit || initialHabit.goal.unit}</span>
+                na
+                <span>{habit.goal.frequency || initialHabit.goal.frequency}</span>
+              </div>
+              <div className={classNames(styles.habit__help_text, 'p_small')}>
+                Aby edytować m.in. progress, wejdź w tryb edycji.
+              </div>
+              <div className={classNames(styles.habit__created_date, 'p-smallest')}>
+                Utworzono: {habit.createdDate || null}
+              </div>
+            </div>
+            <div className={styles.habit__bottom}>
+              <button className='button-secondary' onClick={deleteHandler}>
+                usuń
+              </button>
+              <button className='button-primary' onClick={() => setEditingHabit(habit._id, 'edit')}>
+                edytuj
+              </button>
+            </div>
           </div>
-
-          <div className={styles.habit__container}>
-            <strong>Cel:</strong>
-            <span>{habit.goal.amount || initialHabit.goal.amount}</span>
-            <span>{habit.goal.unit || initialHabit.goal.unit}</span>
-            na
-            <span>{habit.goal.frequency || initialHabit.goal.frequency}</span>
-          </div>
-          <div className={styles.habit__help_text}>
-            Aby edytować m.in. progress, wejdź w tryb edycji.
-          </div>
-          <div className={styles.habit__created_date}>Utworzono: {habit.createdDate || null}</div>
-
-          <div className='buttons-container'>
-            <button className='button-secondary' onClick={deleteHandler}>
-              usuń
-            </button>
-            <button className='button-primary' onClick={() => setEditingHabit(habit._id, 'edit')}>
-              edytuj
-            </button>
-          </div>
-        </div>
+        </>
       )}
     </>
   );

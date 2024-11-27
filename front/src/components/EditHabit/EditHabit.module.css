@@ -1,43 +1,60 @@
 .editHabit {
   position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 100;
-  background-color: #d8d8d9;
-  max-height: 400px;
-  max-width: 500px;
-  height: 35vw;
-  width: 45vw;
+  inset: 0;
+  max-height: 80vh;
+  margin: auto 16px;
+  height: fit-content;
+  z-index: 5;
+  background-color: #f7f7f7;
   box-shadow: 0px 0px 20px 1px rgb(80, 80, 80);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px;
-  border-radius: 15px;
+  border-radius: 8px;
+  @media screen and (min-width: 768px) {
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 400px;
+    max-width: 500px;
+    height: 35vw;
+    width: 45vw;
+  }
 }
 
-.editHabit_header {
-  text-align: center;
-  border-bottom: 1px solid black;
-  width: 80%;
-  margin: 0 auto 10% auto;
-  padding-top: 10px;
+.editHabit__top {
+  border-bottom: 1px solid var(--border-color);
+  padding: 24px 24px 8px;
 }
 
-.editHabit_title {
+.editHabit__middle {
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 24px 24px;
+}
+
+.editHabit__bottom {
   display: flex;
-  margin-bottom: 10px;
-  align-items: baseline;
+  flex-direction: column-reverse;
+  justify-items: center;
+  gap: 8px;
+  padding: 16px 24px 24px;
 }
 
-.editHabit_title input {
-  width: 100%;
-}
-
-.goal_container {
+.editHabit__field {
   display: flex;
-  gap: 10px;
-  margin: 10px 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editHabit__field--row {
+  flex-direction: row;
+}
+
+.editHabit__field input {
+}
+
+.editHabit__goal {
+  display: flex;
+  gap: 8px;
   align-items: baseline;
 }
