@@ -1,11 +1,15 @@
 :root {
   --primary-color: #34526f;
+  --primary-color-lighter: #5686b3;
+  --primary-color-lightest: #c1ddf8;
   --secondary-color: #d1d1d1;
   --border-color: rgb(198, 202, 207);
   --text-font-family: 'Montserrat', sans-serif;
   --h1-font-family: 'Merriweather Sans', sans-serif;
   --header-font-family: 'Open Sans', serif;
   --black-color: #000000e6;
+  --font-size-sm: 14px;
+  --font-size-xs: 12px;
   font-size: 16px;
   @media screen and (min-width: var(--tablet-res)) {
   }
@@ -37,12 +41,16 @@ select {
   font-size: 14px;
   line-height: 1.5;
   border-radius: 3px;
+  margin: 0;
+}
+
+input[type='number'] {
+  max-width: 80px;
 }
 
 label {
   font-weight: 600;
 }
-
 
 h1 {
   font-family: var(--h1-font-family);
@@ -161,6 +169,10 @@ button:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.bold {
+  font-weight: 600;
 }
 
 /* 

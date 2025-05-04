@@ -1,7 +1,6 @@
 .editHabit {
   position: absolute;
   inset: 0;
-  max-height: 80vh;
   margin: auto 16px;
   height: fit-content;
   z-index: 5;
@@ -11,7 +10,8 @@
   flex-direction: column;
   justify-content: space-between;
   border-radius: 8px;
-  @media screen and (min-width: 768px) {
+
+  @media screen and (min-width: 1024px) {
     top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -30,6 +30,10 @@
 .editHabit__middle {
   border-bottom: 1px solid var(--border-color);
   padding: 16px 24px 24px;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .editHabit__bottom {
