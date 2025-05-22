@@ -13,21 +13,21 @@ const HabitSchema = new mongoose.Schema({
     },
     unit: {
       type: String,
-      enum: ['razy', 'min'],
-      default: 'razy',
+      enum: ['times', 'min'],
+      default: 'times',
       required: true,
     },
     frequency: {
       type: String,
-      enum: ['dzień', 'tydzień', 'miesiąc'],
-      default: 'dzień',
+      enum: ['day', 'week', 'month'],
+      default: 'day',
       required: true,
     },
   },
   repeat: {
     type: String,
-    enum: ['codziennie', 'co tydzień', 'co miesiąc'],
-    default: 'codziennie',
+    enum: ['every day', 'every week', 'every month'],
+    default: 'every day',
     required: true,
   },
   isDone: {

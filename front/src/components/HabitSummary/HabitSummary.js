@@ -8,7 +8,7 @@ function HabitSummary({ habit }) {
   const updateHabitMutation = useUpdateHabit(habit._id);
 
   const [isMarkedDone, setIsMarkedDone] = useState(habit.isDone);
-  const [buttonText, setButtonText] = useState(isMarkedDone ? 'Zrobione' : 'Do zrobienia');
+  const [buttonText, setButtonText] = useState(isMarkedDone ? 'Done' : 'To do');
 
   const [progress, setProgress] = useState(habit.progress);
   const [progressPercentage, setProgressPercentage] = useState(
@@ -65,14 +65,12 @@ function HabitSummary({ habit }) {
       <button
         className='button-primary'
         onClick={handleMarkAsDone}
-        onMouseEnter={() => !isMarkedDone && setButtonText('Kliknij, aby zmienić')} // Change text on hover
-        onMouseLeave={() =>
-          !isMarkedDone && setButtonText(isMarkedDone ? 'Zrobione' : 'Do zrobienia')
-        } // Change text on hover
+        onMouseEnter={() => !isMarkedDone && setButtonText('Change the status')} // Change text on hover
+        onMouseLeave={() => !isMarkedDone && setButtonText(isMarkedDone ? 'Done' : 'To do')} // Change text on hover
       >
-        {buttonText === 'Zrobione' ? (
+        {buttonText === 'Done' ? (
           <>
-            <FontAwesomeIcon icon={faCheck} /> Zrobione
+            <FontAwesomeIcon icon={faCheck} /> Done
           </>
         ) : (
           buttonText

@@ -40,7 +40,7 @@ function UserLogin() {
         required
         onChange={(e) => setEmail(e.target.value)}
       />
-      <label>Hasło:</label>
+      <label>Password:</label>
       <input
         id='input_password'
         type='password'
@@ -50,7 +50,7 @@ function UserLogin() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <div className='error-container'>{errorMessage}</div>
-      <button className='button-primary'>Zaloguj się</button>
+      <button className='button-primary'>Log in</button>
     </form>
   );
 }

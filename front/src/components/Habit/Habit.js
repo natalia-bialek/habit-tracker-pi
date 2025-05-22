@@ -40,25 +40,22 @@ function Habit() {
             </div>
             <div className={styles.habit__middle}>
               <div className={styles.habit__goal}>
-                <strong>Cel:</strong>
+                <strong>Goal:</strong>
                 <span>{habit.goal.amount || initialHabit.goal.amount}</span>
                 <span>{habit.goal.unit || initialHabit.goal.unit}</span>
-                na
+                per
                 <span>{habit.goal.frequency || initialHabit.goal.frequency}</span>
               </div>
-              <div className={classNames(styles.habit__help_text, 'p_small')}>
-                Aby edytować m.in. progress, wejdź w tryb edycji.
-              </div>
               <div className={classNames(styles.habit__created_date, 'p-smallest')}>
-                Utworzono: {habit.createdDate || null}
+                Created: {habit.createdDate || null}
               </div>
             </div>
             <div className={styles.habit__bottom}>
               <button className='button-secondary' onClick={deleteHandler}>
-                usuń
+                Delete
               </button>
               <button className='button-primary' onClick={() => setEditingHabit(habit._id, 'edit')}>
-                edytuj
+                Edit
               </button>
             </div>
           </div>

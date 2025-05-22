@@ -40,7 +40,7 @@ function UserRegister() {
 
   return (
     <form className={styles.UserRegister} onSubmit={handleSubmit}>
-      <label>Imię:</label>
+      <label>Name:</label>
       <input
         id='input_name'
         type='text'
@@ -57,7 +57,7 @@ function UserRegister() {
         required
         onChange={(e) => setEmail(e.target.value)}
       />
-      <label>Hasło:</label>
+      <label>Password:</label>
       <input
         id='input_password'
         type='password'
@@ -67,7 +67,7 @@ function UserRegister() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <div className='error-container'>{errorMessage}</div>
-      <button className='button-primary'>Zarejestruj się</button>
+      <button className='button-primary'>Register</button>
     </form>
   );
 }

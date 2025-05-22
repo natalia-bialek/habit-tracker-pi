@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const uniqueValidator = require("mongoose-unique-validator");
-const crypto = require("crypto");
-const Habit = require("./habit");
+const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
+const crypto = require('crypto');
+const Habit = require('./habit');
 
 const validateEmail = function (email) {
   const pattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -12,20 +12,17 @@ const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     lowercase: true,
-    required: [true, "Pole nie może być puste"],
-    match: [/^[a-zA-Z0-9]+$/, "is invalid"],
+    required: [true, 'Field is required'],
+    match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
     maxLength: 50,
   },
   email: {
     type: String,
     lowercase: true,
-    required: [true, "Pole nie może być puste"],
+    required: [true, 'Field is required'],
     unique: true,
     uniqueCaseInsensitive: true,
-    validate: [
-      validateEmail,
-      "Upewnij się, że pole jest odpowiednio uzupełnione",
-    ],
+    validate: [validateEmail, 'Make sure the format is correct'],
     maxLength: 100,
   },
   habits: [Habit.schema],
@@ -35,22 +32,18 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.plugin(uniqueValidator, {
-  message: "Ten użytkownik istnieje już w naszej bazie danych.",
+  message: 'User already exist',
 });
 UserSchema.methods.setPassword = function (password) {
-  this.salt = crypto.randomBytes(16).toString("hex");
-  this.hash = crypto
-    .pbkdf2Sync(password, this.salt, 10000, 512, "sha512")
-    .toString("hex");
+  this.salt = crypto.randomBytes(16).toString('hex');
+  this.hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
 };
 
 UserSchema.methods.validPassword = function (password) {
-  var hash = crypto
-    .pbkdf2Sync(password, this.salt, 10000, 512, "sha512")
-    .toString("hex");
+  var hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
   return this.hash === hash;
 };
 
-const User = mongoose.model("User", UserSchema);
+const User = mongoose.model('User', UserSchema);
 
 module.exports = User;

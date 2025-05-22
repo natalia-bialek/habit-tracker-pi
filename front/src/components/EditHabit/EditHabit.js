@@ -90,13 +90,13 @@ function EditHabit({ _id = '' }) {
         >
           <div className={styles.editHabit__top}>
             <h2 className={styles.editHabit_header}>
-              {editingHabit.mode === 'edit' ? 'Edytuj nawyk' : 'Dodaj nowy nawyk'}
+              {editingHabit.mode === 'edit' ? 'Edit habit' : 'Add new habit'}
             </h2>
           </div>
 
           <div className={styles.editHabit__middle}>
             <div className={classNames(styles.editHabit__field)}>
-              <label>Tytuł</label>
+              <label>Title</label>
               <input
                 id='input_title'
                 className={styles.editHabit__input}
@@ -109,7 +109,7 @@ function EditHabit({ _id = '' }) {
               />
             </div>
             <div className={classNames(styles.editHabit__field)}>
-              <label>Cel</label>
+              <label>Goal</label>
               <div className={styles.editHabit__goal}>
                 <input
                   id='input_amount'
@@ -127,19 +127,19 @@ function EditHabit({ _id = '' }) {
                   onChange={(e) => setUnit(e.target.value)}
                   value={unit}
                 >
-                  <option value='razy'>Razy</option>
+                  <option value='razy'>Times</option>
                   <option value='min'>Min</option>
                 </select>
-                <p>na</p>
+                <p>per</p>
                 <select
                   id='select_frequency'
                   name='frequency'
                   onChange={(e) => setFrequency(e.target.value)}
                   value={frequency}
                 >
-                  <option value='dzień'>Dzień</option>
-                  <option value='tydzień'>Tydzień</option>
-                  <option value='miesiąc'>Miesiąc</option>
+                  <option value='day'>Day</option>
+                  <option value='week'>Week</option>
+                  <option value='month'>Month</option>
                 </select>
               </div>
             </div>
@@ -164,10 +164,10 @@ function EditHabit({ _id = '' }) {
 
           <div className={styles.editHabit__bottom}>
             <button type='button' className='button-secondary' onClick={() => hideEditHabit()}>
-              Anuluj
+              Cancel
             </button>
             <button type='submit' className='button-primary'>
-              Zapisz
+              Save
             </button>
           </div>
         </form>

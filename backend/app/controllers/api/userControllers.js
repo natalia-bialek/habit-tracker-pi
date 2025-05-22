@@ -1,6 +1,6 @@
-const User = require("../../db/models/user");
-const config = require("../../config.js");
-const jwt = require("jsonwebtoken");
+const User = require('../../db/models/user');
+const config = require('../../config.js');
+const jwt = require('jsonwebtoken');
 //const dateFnsTz = require("date-fns-tz");
 
 module.exports = {
@@ -23,7 +23,7 @@ module.exports = {
 
       await user.save();
     } catch (error) {
-      return res.status(422).json({ message: error, controller: "signUp" });
+      return res.status(422).json({ message: error, controller: 'signUp' });
     }
 
     res.status(201).json(user);
@@ -43,21 +43,17 @@ module.exports = {
       const user = await User.findOne({ email: email });
 
       if (!user) {
-        return res
-          .status(404)
-          .json({ message: "Użytkownik nie istnieje", controller: "signIn" });
+        return res.status(404).json({ message: 'User not found', controller: 'signIn' });
       }
 
       let passwordIsValid = user.validPassword(password);
 
       if (!passwordIsValid) {
-        return res
-          .status(401)
-          .json({ message: "Niewłaściwe hasło", controller: "signIn" });
+        return res.status(401).json({ message: 'Wrong password', controller: 'signIn' });
       }
 
       const token = jwt.sign({ _id: user._id }, config.SECRET, {
-        algorithm: "HS256",
+        algorithm: 'HS256',
         allowInsecureKeySizes: true,
         expiresIn: 86400, // 24 hours
       });
@@ -67,9 +63,7 @@ module.exports = {
         accessToken: token,
       });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ message: error.message, controller: "signIn" });
+      return res.status(500).json({ message: error.message, controller: 'signIn' });
     }
   },
 };

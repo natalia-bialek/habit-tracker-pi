@@ -6,11 +6,11 @@ export const useHabitStore = create((set) => ({
   editingHabit: { _id: undefined, isVisible: false, mode: undefined },
   initialHabit: {
     title: '',
-    repeat: 'codziennie',
+    repeat: 'every day',
     goal: {
       amount: 1,
-      unit: 'razy',
-      frequency: 'dzień',
+      unit: 'times',
+      frequency: 'day',
     },
     progress: 0,
     isDone: false,

@@ -3,7 +3,7 @@ import { RRule } from 'rrule';
 import styles from './FrequencyPicker.module.css';
 
 const FrequencyPicker = (props) => {
-  const { onChange } = props;
+  const { onChange, goalRuleString } = props;
 
   const [frequency, setFrequency] = useState('daily');
   const [interval, setInterval] = useState(1);
@@ -101,6 +101,7 @@ const FrequencyPicker = (props) => {
   useEffect(() => {
     const ruleString = generateRRule();
     onChange && onChange(ruleString);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     frequency,
     interval,
@@ -136,7 +137,7 @@ const FrequencyPicker = (props) => {
 
       {frequency === 'weekly' && (
         <div className={`${styles.frequency__field} ${styles.frequency__fieldColumn}`}>
-          <label>W dni:</label>
+          <label>On days:</label>
           <div className={styles.frequency__weekdays}>
             {weekdayLabels.map((day, index) => (
               <button

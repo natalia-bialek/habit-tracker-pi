@@ -18,7 +18,7 @@ function HabitList() {
                 if (object && object.isDone === false)
                   return <HabitSummary key={key} habit={object} />;
               })}
-            {!habits.length && 'Dodaj nowy nawyk!'}
+            {!habits.length && 'Add a new habit!'}
           </div>
           <div className={styles.habitList__inner}>
             <h2>Odhaczone:</h2>

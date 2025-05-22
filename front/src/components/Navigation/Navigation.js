@@ -20,7 +20,7 @@ function Navigation() {
       {loggedUser && (
         <>
           <button className={styles.navigation__logout} onClick={() => logoutUser()}>
-            Wyloguj
+            Log out
           </button>
           <button
             id='newHabitButton'
@@ -31,7 +31,7 @@ function Navigation() {
             }}
           >
             <FontAwesomeIcon icon={faPlus} />
-            Dodaj nawyk
+            Add a habit
           </button>
         </>
       )}
