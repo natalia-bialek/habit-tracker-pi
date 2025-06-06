@@ -74,7 +74,7 @@ module.exports = {
 
   async updateHabit(req, res) {
     const { userId, habitId } = req.params;
-    const { title, goal, repeat, isDone, progress, createdDate } = req.body;
+    const { title, goal, repeat, isDone, progress, createdDate, lastCompletedDate } = req.body;
 
     try {
       const user = await User.findById(userId);
@@ -93,6 +93,7 @@ module.exports = {
       habit.isDone = isDone;
       habit.progress = progress;
       habit.createdDate = createdDate;
+      habit.lastCompletedDate = lastCompletedDate;
 
       await user.save();
       res.status(200).json(habit);

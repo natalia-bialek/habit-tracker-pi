@@ -27,15 +27,14 @@ function HabitSummary({ habit }) {
       setProgressPercentage(newProgressPercentage);
 
       let newIsDone = isMarkedDone;
-      if (newProgressPercentage >= 100) {
-        newIsDone = !isMarkedDone;
-        setIsMarkedDone(newIsDone);
-      }
+      newIsDone = true;
+      setIsMarkedDone(newIsDone);
 
       updateHabitMutation.mutate({
         ...habit,
         isDone: newIsDone,
         progress: newProgress,
+        lastCompletedDate: new Date(),
       });
     }
   };
