@@ -3,7 +3,7 @@ import { RRule } from 'rrule';
 import styles from './FrequencyPicker.module.css';
 
 const FrequencyPicker = (props) => {
-  const { onChange, goalRuleString } = props;
+  const { onChange } = props;
 
   const [frequency, setFrequency] = useState('daily');
   const [interval, setInterval] = useState(1);

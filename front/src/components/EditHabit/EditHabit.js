@@ -147,10 +147,7 @@ function EditHabit({ _id = '' }) {
 
             <div className={classNames(styles.editHabit__field)}>
               <label>Repeat pattern</label>
-              <FrequencyPicker
-                goalRuleString={repeat}
-                onChange={(newRuleString) => setRepeat(newRuleString)}
-              />
+              <FrequencyPicker onChange={(newRuleString) => setRepeat(newRuleString)} />
             </div>
 
             {editingHabit.mode === 'edit' && (

@@ -1,6 +1,6 @@
 import styles from './Habit.module.css';
 import { useHabit } from '../../hooks/useHabit';
-import { useHabitStore, useUserStore } from '../../store';
+import { useHabitStore } from '../../store';
 import { useDeleteHabit } from '../../hooks/useDeleteHabit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
