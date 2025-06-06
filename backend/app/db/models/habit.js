@@ -26,8 +26,6 @@ const HabitSchema = new mongoose.Schema({
   },
   repeat: {
     type: String,
-    enum: ['every day', 'every week', 'every month'],
-    default: 'every day',
     required: true,
   },
   isDone: {

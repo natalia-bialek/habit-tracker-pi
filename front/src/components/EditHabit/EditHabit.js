@@ -7,6 +7,7 @@ import axios from '../../axios.js';
 import { useMutation } from '@tanstack/react-query';
 import * as dateFnsTz from 'date-fns-tz';
 import classNames from 'classnames';
+import FrequencyPicker from '../FrequencyPicker/FrequencyPicker.js';
 
 function EditHabit({ _id = '' }) {
   const updateHabitMutation = useUpdateHabit(_id);
@@ -142,6 +143,14 @@ function EditHabit({ _id = '' }) {
                   <option value='month'>Month</option>
                 </select>
               </div>
+            </div>
+
+            <div className={classNames(styles.editHabit__field)}>
+              <label>Repeat pattern</label>
+              <FrequencyPicker
+                goalRuleString={repeat}
+                onChange={(newRuleString) => setRepeat(newRuleString)}
+              />
             </div>
 
             {editingHabit.mode === 'edit' && (
