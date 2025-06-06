@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import axios from './axios.js';
 
 export const useHabitStore = create((set) => ({
+  isOverlayVisible: false,
   showingHabit: { _id: undefined, isVisible: false },
   editingHabit: { _id: undefined, isVisible: false, mode: undefined },
   initialHabit: {
@@ -14,6 +15,9 @@ export const useHabitStore = create((set) => ({
     },
     progress: 0,
     isDone: false,
+  },
+  setIsOverlayVisible: (value) => {
+    set(() => ({ isOverlayVisible: value }));
   },
   setShowingHabit: (newId, isVisible) => {
     set(() => ({ showingHabit: { _id: newId, isVisible: isVisible } }));
