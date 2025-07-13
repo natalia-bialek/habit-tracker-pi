@@ -34,6 +34,9 @@
 .habit__middle {
   border-bottom: 1px solid var(--border-color);
   padding: 16px 24px 24px;
+  gap: 4px;
+  display: flex;
+  flex-direction: column;
 }
 
 .habit__bottom {
@@ -49,7 +52,7 @@
   color: var(--primary-color);
 }
 
-.habit__goal {
+.habit__detail {
   display: flex;
   gap: 4px;
 }

@@ -1,4 +1,5 @@
 import styles from './Habit.module.css';
+import { RRule } from 'rrule';
 import { useHabit } from '../../hooks/useHabit';
 import { useHabitStore } from '../../store';
 import { useDeleteHabit } from '../../hooks/useDeleteHabit';
@@ -39,13 +40,19 @@ function Habit() {
               </button>
             </div>
             <div className={styles.habit__middle}>
-              <div className={styles.habit__goal}>
+              <div className={styles.habit__detail}>
                 <strong>Goal:</strong>
                 <span>{habit.goal.amount || initialHabit.goal.amount}</span>
                 <span>{habit.goal.unit || initialHabit.goal.unit}</span>
                 per
                 <span>{habit.goal.frequency || initialHabit.goal.frequency}</span>
               </div>
+              {habit.repeat && (
+                <div className={styles.habit__detail}>
+                  <strong>Repeats:</strong>
+                  <span>{RRule.fromString(habit.repeat).toText()}</span>
+                </div>
+              )}
               <div className={classNames(styles.habit__created_date, 'p-smallest')}>
                 Created: {habit.createdDate || null}
               </div>
