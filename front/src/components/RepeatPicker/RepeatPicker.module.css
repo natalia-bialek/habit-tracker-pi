@@ -1,4 +1,4 @@
-.frequency {
+.repeat {
   margin-bottom: 8px;
   display: flex;
   flex-direction: column;
@@ -11,25 +11,25 @@
   }
 }
 
-.frequency__field {
+.repeat__field {
   display: flex;
   justify-items: center;
   align-items: center;
   gap: 8px;
 }
 
-.frequency__fieldColumn {
+.repeat__fieldColumn {
   flex-direction: column;
   align-items: flex-start;
 }
 
-.frequency__weekdays {
+.repeat__weekdays {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
 }
 
-.frequency__weekdayButton {
+.repeat__weekdayButton {
   margin-top: 8px;
   min-width: 40px;
   cursor: pointer;
@@ -40,12 +40,12 @@
   transition: all 0.2s ease;
 }
 
-.frequency__weekdayButton.selected {
+.repeat__weekdayButton.selected {
   background-color: var(--primary-color-lighter);
   color: white;
 }
 
-.frequency__radioGroup .frequency__radioLabel {
+.repeat__radioGroup .repeat__radioLabel {
   display: flex;
   flex-direction: row;
   align-items: center;
