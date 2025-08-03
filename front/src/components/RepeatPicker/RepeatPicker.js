@@ -14,12 +14,44 @@ const RepeatPicker = (props) => {
     }
   } catch (e) {}
 
+  const weekdayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const weekdayToRRule = [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR, RRule.SA, RRule.SU];
+
+  // Parse monthly recurrence type
+  let initialMonthlyType = 'day';
+  let initialMonthDay = 1;
+  let initialMonthlyWeekday = 0;
+  let initialMonthlyWeekdayPosition = 1;
+
+  if (initialOptions.freq === RRule.MONTHLY) {
+    if (initialOptions.bymonthday && initialOptions.bymonthday.length > 0) {
+      // Monthly recurrence on specific day of month
+      initialMonthlyType = 'day';
+      initialMonthDay = initialOptions.bymonthday[0];
+    } else if (initialOptions.bynweekday && initialOptions.bynweekday.length > 0) {
+      // Monthly recurrence on specific weekday
+      initialMonthlyType = 'weekday';
+      const weekdayArray = initialOptions.bynweekday[0];
+      if (Array.isArray(weekdayArray) && weekdayArray.length === 2) {
+        const [weekday, position] = weekdayArray;
+        initialMonthlyWeekday = weekday;
+        initialMonthlyWeekdayPosition = position;
+      }
+    }
+  }
+
   const [frequency, setFrequency] = useState(initialOptions.freq ?? RRule.DAILY);
   const [interval, setInterval] = useState(initialOptions.interval ?? 1);
   const [weekdays, setWeekdays] = useState(
     initialOptions.byweekday && initialOptions.byweekday.length > 0
       ? initialOptions.byweekday.map((wd) => (typeof wd === 'number' ? wd : wd.weekday))
       : []
+  );
+  const [monthlyType, setMonthlyType] = useState(initialMonthlyType);
+  const [monthDay, setMonthDay] = useState(initialMonthDay);
+  const [monthlyWeekday, setMonthlyWeekday] = useState(initialMonthlyWeekday);
+  const [monthlyWeekdayPosition, setMonthlyWeekdayPosition] = useState(
+    initialMonthlyWeekdayPosition
   );
 
   const skipFirstUpdate = useRef(false);
@@ -29,6 +61,12 @@ const RepeatPicker = (props) => {
       let ruleConfig = { freq: frequency, interval };
       if (frequency === RRule.WEEKLY) {
         ruleConfig.byweekday = weekdays;
+      } else if (frequency === RRule.MONTHLY) {
+        if (monthlyType === 'day') {
+          ruleConfig.bymonthday = monthDay;
+        } else {
+          ruleConfig.byweekday = [weekdayToRRule[monthlyWeekday].nth(monthlyWeekdayPosition)];
+        }
       }
       const newRule = new RRule(ruleConfig);
       const newRuleString = newRule.toString();
@@ -37,7 +75,15 @@ const RepeatPicker = (props) => {
       skipFirstUpdate.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frequency, interval, weekdays]);
+  }, [
+    frequency,
+    interval,
+    weekdays,
+    monthlyType,
+    monthDay,
+    monthlyWeekday,
+    monthlyWeekdayPosition,
+  ]);
 
   const handleFrequencyChange = (e) => {
     setFrequency(Number(e.target.value));
@@ -58,7 +104,29 @@ const RepeatPicker = (props) => {
     }
   };
 
-  const weekdayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const handleMonthlyTypeChange = (e) => {
+    setMonthlyType(e.target.value);
+  };
+
+  const handleMonthDayChange = (e) => {
+    setMonthDay(Number.parseInt(e.target.value, 10) || 1);
+  };
+
+  const handleMonthlyWeekdayChange = (e) => {
+    setMonthlyWeekday(Number(e.target.value));
+  };
+
+  const handleMonthlyWeekdayPositionChange = (e) => {
+    setMonthlyWeekdayPosition(Number(e.target.value));
+  };
+
+  const weekdayPositions = [
+    { value: 1, label: 'First' },
+    { value: 2, label: 'Second' },
+    { value: 3, label: 'Third' },
+    { value: 4, label: 'Fourth' },
+    { value: -1, label: 'Last' },
+  ];
 
   return (
     <div className={styles.repeat}>
@@ -101,6 +169,72 @@ const RepeatPicker = (props) => {
           </div>
         </div>
       )}
+      {frequency === RRule.MONTHLY && (
+        <div className={`${styles.repeat__field} ${styles.repeat__fieldColumn}`}>
+          <div className={styles.repeat__radioGroup}>
+            <label className={styles.repeat__radioLabel}>
+              <input
+                type='radio'
+                name='monthlyType'
+                value='day'
+                checked={monthlyType === 'day'}
+                onChange={handleMonthlyTypeChange}
+                className={styles.radioInput}
+              />
+              On day
+              <input
+                type='number'
+                min='1'
+                max='31'
+                value={monthDay}
+                onChange={handleMonthDayChange}
+                disabled={monthlyType !== 'day'}
+                className={styles.dayInput}
+              />
+              of the month
+            </label>
+          </div>
+
+          <div className={styles.repeat__radioGroup}>
+            <label className={styles.repeat__radioLabel}>
+              <input
+                type='radio'
+                name='monthlyType'
+                value='weekday'
+                checked={monthlyType === 'weekday'}
+                onChange={handleMonthlyTypeChange}
+                className={styles.radioInput}
+              />
+              On the
+              <select
+                value={monthlyWeekdayPosition}
+                onChange={handleMonthlyWeekdayPositionChange}
+                disabled={monthlyType !== 'weekday'}
+                className={styles.select}
+              >
+                {weekdayPositions.map((pos) => (
+                  <option key={pos.value} value={pos.value}>
+                    {pos.label}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={monthlyWeekday}
+                onChange={handleMonthlyWeekdayChange}
+                disabled={monthlyType !== 'weekday'}
+                className={styles.select}
+              >
+                {weekdayLabels.map((day, index) => (
+                  <option key={index} value={index}>
+                    {day}
+                  </option>
+                ))}
+              </select>
+              of the month
+            </label>
+          </div>
+        </div>
+      )}
       <div className={styles.preview}>
         <p className='bold'>Preview:</p>
         <p>
@@ -109,6 +243,14 @@ const RepeatPicker = (props) => {
               let ruleConfig = { freq: frequency, interval };
               if (frequency === RRule.WEEKLY) {
                 ruleConfig.byweekday = weekdays;
+              } else if (frequency === RRule.MONTHLY) {
+                if (monthlyType === 'day') {
+                  ruleConfig.bymonthday = monthDay;
+                } else {
+                  ruleConfig.byweekday = [
+                    weekdayToRRule[monthlyWeekday].nth(monthlyWeekdayPosition),
+                  ];
+                }
               }
               return new RRule(ruleConfig).toText();
             } catch (e) {

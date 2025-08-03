@@ -43,6 +43,12 @@ const HabitSchema = new mongoose.Schema({
   lastCompletedDate: {
     type: Date,
   },
+  lastProgressReset: {
+    type: Date,
+  },
+  lastIsDoneReset: {
+    type: Date,
+  },
   // startDate: {
   //   type: Date,
   //   default: Date.now,
