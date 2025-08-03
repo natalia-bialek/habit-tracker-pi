@@ -11,6 +11,7 @@
   border-left-color: #35699b;
   border-left-width: 4px;
   box-shadow: 1px 2px 7px 0px rgba(66, 68, 90, 0.15);
+  position: relative;
   @media screen and (min-width: 768px) {
     flex-direction: row;
   }
@@ -22,16 +23,24 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 8px;
+  padding-right: 140px;
   @media screen and (min-width: 768px) {
     max-width: 70%;
   }
+}
+
+.summary__header h3 {
+  margin: 0;
+  padding: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .summary__progress {
   display: flex;
   gap: 20px;
   align-items: center;
-  margin-bottom: 16px;
   width: 100%;
   @media screen and (min-width: 768px) {
     margin-bottom: 0px;
@@ -56,6 +65,13 @@
   position: absolute;
 }
 
+.summary__streak {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
 .summary button {
+  margin-top: 16px;
   justify-content: center;
 }

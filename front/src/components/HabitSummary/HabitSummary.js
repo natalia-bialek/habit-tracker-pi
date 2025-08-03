@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useHabitStore } from '../../store';
 import { useUpdateHabit } from '../../hooks/useUpdateHabit';
+import StreakDisplay from '../StreakDisplay/StreakDisplay';
+
 function HabitSummary({ habit }) {
   const updateHabitMutation = useUpdateHabit(habit._id);
 
@@ -58,6 +60,9 @@ function HabitSummary({ habit }) {
           <div>
             {progress}/{goalAmount}
           </div>
+        </div>
+        <div className={styles.summary__streak}>
+          <StreakDisplay streak={habit.streak} repeat={habit.repeat} />
         </div>
       </div>
 

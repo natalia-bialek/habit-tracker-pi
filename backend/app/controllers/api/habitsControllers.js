@@ -3,6 +3,17 @@ const User = require('../../db/models/user');
 const dateFnsTz = require('date-fns-tz');
 const { RRule } = require('rrule');
 
+const DEBUG_MODE = process.env.DEBUG_MODE === 'true';
+const DEBUG_DATE = process.env.DEBUG_DATE ? new Date(process.env.DEBUG_DATE) : null;
+
+function getCurrentDate() {
+  if (DEBUG_MODE && DEBUG_DATE) {
+    console.log(`🔧 DEBUG MODE: Using custom date ${DEBUG_DATE.toISOString()}`);
+    return new Date(DEBUG_DATE);
+  }
+  return new Date();
+}
+
 module.exports = {
   async createNewHabit(req, res) {
     const userId = req.params.userId;
@@ -48,12 +59,13 @@ module.exports = {
       }
 
       let updated = false;
+
       user.habits.forEach((habit) => {
         if (!habit.repeat || !habit.repeat.startsWith('RRULE:')) {
           habit.repeat = 'RRULE:FREQ=DAILY;INTERVAL=1';
         }
 
-        const now = new Date();
+        const now = getCurrentDate();
 
         let needsIsDoneReset = false;
         if (habit.repeat) {
@@ -62,8 +74,28 @@ module.exports = {
             const today = new Date(now);
             today.setHours(0, 0, 0, 0);
 
-            const nextOccurrence = rule.after(new Date(today.getTime() - 1), true);
-            if (nextOccurrence && nextOccurrence.toDateString() === today.toDateString()) {
+            let isTodayOccurrence = false;
+
+            if (habit.repeat.includes('FREQ=WEEKLY')) {
+              const todayWeekday = today.getDay();
+              const ruleOptions = rule.options;
+
+              if (ruleOptions.byweekday && ruleOptions.byweekday.length > 0) {
+                const rruleWeekday = (todayWeekday + 6) % 7;
+                const ruleWeekday = ruleOptions.byweekday[0];
+                isTodayOccurrence = rruleWeekday === ruleWeekday;
+              } else {
+                const nextOccurrence = rule.after(new Date(today.getTime() - 1), true);
+                isTodayOccurrence =
+                  nextOccurrence && nextOccurrence.toDateString() === today.toDateString();
+              }
+            } else {
+              const nextOccurrence = rule.after(new Date(today.getTime() - 1), true);
+              isTodayOccurrence =
+                nextOccurrence && nextOccurrence.toDateString() === today.toDateString();
+            }
+
+            if (isTodayOccurrence) {
               const lastIsDoneReset = habit.lastIsDoneReset
                 ? new Date(habit.lastIsDoneReset)
                 : null;
@@ -102,13 +134,24 @@ module.exports = {
         const needsProgressReset = !lastProgressReset || lastProgressReset < periodStart;
 
         if (needsProgressReset) {
+          const wasCompletedInPreviousPeriod = habit.progress >= (habit.goal?.amount || 0);
+
+          if (wasCompletedInPreviousPeriod) {
+            const oldStreak = habit.streak || 0;
+            habit.streak = oldStreak + 1;
+          } else {
+            habit.streak = 0;
+          }
+
           habit.progress = 0;
           habit.lastProgressReset = now;
           updated = true;
         }
       });
 
-      if (updated) await user.save();
+      if (updated) {
+        await user.save();
+      }
     } catch (error) {
       return res.status(500).json({ message: error.message, controller: 'getAllHabits' });
     }

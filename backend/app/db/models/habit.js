@@ -49,6 +49,11 @@ const HabitSchema = new mongoose.Schema({
   lastIsDoneReset: {
     type: Date,
   },
+  streak: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
   // startDate: {
   //   type: Date,
   //   default: Date.now,

@@ -6,6 +6,7 @@ import { useDeleteHabit } from '../../hooks/useDeleteHabit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
+import StreakDisplay from '../StreakDisplay/StreakDisplay';
 
 function Habit() {
   const showingHabitId = useHabitStore((state) => state.showingHabit._id);
@@ -53,6 +54,9 @@ function Habit() {
                   <span>{RRule.fromString(habit.repeat).toText()}</span>
                 </div>
               )}
+              <div className={styles.habit__streak}>
+                <StreakDisplay streak={habit.streak} repeat={habit.repeat} />
+              </div>
               <div className={classNames(styles.habit__created_date, 'p-smallest')}>
                 Created: {habit.createdDate || null}
               </div>
