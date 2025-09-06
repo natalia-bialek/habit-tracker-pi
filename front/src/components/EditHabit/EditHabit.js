@@ -40,7 +40,7 @@ function EditHabit({ _id = '' }) {
 
   const mutation = useMutation({
     mutationFn: async (newHabit) => {
-      return await axios.post(`/users/${userId}/habits`, newHabit);
+      return await axios.post('/habits', newHabit);
     },
     onSuccess: (data) => {
       setEditingHabit(data._id, 'add');

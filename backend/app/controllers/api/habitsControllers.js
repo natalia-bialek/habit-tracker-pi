@@ -16,7 +16,7 @@ function getCurrentDate() {
 
 module.exports = {
   async createNewHabit(req, res) {
-    const userId = req.params.userId;
+    const userId = req.userId;
     const { title, goal, repeat, isDone, progress } = req.body;
     const createdDate = dateFnsTz.format(new Date(), 'dd-MM-yyyy HH:mm', {
       timeZone: 'Europe/Warsaw',
@@ -28,7 +28,7 @@ module.exports = {
       if (!user) {
         return res
           .status(404)
-          .json({ message: error.message, controller: 'createNewHabit > findUser' });
+          .json({ message: 'User not found', controller: 'createNewHabit > findUser' });
       }
 
       const habit = {
@@ -50,14 +50,14 @@ module.exports = {
   },
 
   async getAllHabits(req, res) {
-    const userId = req.params.userId;
-    let user;
-    try {
-      user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
+    const userId = req.userId;
 
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    try {
       let updated = false;
 
       user.habits.forEach((habit) => {
@@ -159,13 +159,16 @@ module.exports = {
   },
 
   async getHabit(req, res) {
-    const { userId, habitId } = req.params;
+    const userId = req.userId;
+    const habitId = req.params.habitId;
+
     try {
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-      const habit = user.habits.find((habit) => habit._id.toString() === habitId);
+
+      const habit = user.habits.id(habitId);
       if (!habit) {
         return res.status(404).json({ message: 'Habit not found' });
       }
@@ -177,8 +180,10 @@ module.exports = {
   },
 
   async updateHabit(req, res) {
-    const { userId, habitId } = req.params;
-    const { title, goal, repeat, isDone, progress, createdDate, lastCompletedDate } = req.body;
+    const userId = req.userId;
+    const habitId = req.params.habitId;
+    const { title, goal, repeat, isDone, progress } = req.body;
+
     try {
       const user = await User.findById(userId);
       if (!user) {
@@ -195,28 +200,33 @@ module.exports = {
       habit.repeat = repeat;
       habit.isDone = isDone;
       habit.progress = progress;
-      habit.createdDate = createdDate;
-      habit.lastCompletedDate = lastCompletedDate;
+
 
       await user.save();
-      res.status(200).json(habit);
+      res.status(200).json(user.habits);
     } catch (error) {
       return res.status(500).json({ message: error.message, controller: 'updateHabit' });
     }
   },
 
   async deleteHabit(req, res) {
-    const { userId, habitId } = req.params;
+    const userId = req.userId;
+    const habitId = req.params.habitId;
+
     try {
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      user.habits = user.habits.filter((habit) => habit._id.toString() !== habitId);
-      await user.save();
+      const habit = user.habits.id(habitId);
+      if (!habit) {
+        return res.status(404).json({ message: 'Habit not found' });
+      }
 
-      res.sendStatus(204);
+      habit.deleteOne();
+      await user.save();
+      res.status(200).json(user.habits);
     } catch (error) {
       return res.status(500).json({ message: error.message, controller: 'deleteHabit' });
     }

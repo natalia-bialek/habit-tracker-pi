@@ -21,7 +21,7 @@ function UserLogin() {
     try {
       const res = await axios.post('/users/signin', userObject);
       if (res.data.accessToken) {
-        loginUser(res.data._id);
+        loginUser(res.data._id, res.data.accessToken);
       }
     } catch (error) {
       console.error('LOGIN ERROR:', error.response.data.controller);

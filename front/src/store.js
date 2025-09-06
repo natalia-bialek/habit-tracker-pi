@@ -35,14 +35,21 @@ export const useHabitStore = create((set) => ({
 export const useUserStore = create((set) => ({
   currentUserId: localStorage.getItem('user') || undefined,
   isUserLogged: localStorage.getItem('user') ? true : false,
-  loginUser: (data) => {
+  accessToken: localStorage.getItem('accessToken') || undefined,
+
+  loginUser: (data, token) => {
     localStorage.setItem('user', data);
+    localStorage.setItem('accessToken', token);
     set(() => ({ currentUserId: data }));
     set(() => ({ isUserLogged: true }));
+    set(() => ({ accessToken: token }));
   },
+
   logoutUser: () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
     set(() => ({ currentUserId: undefined }));
     set(() => ({ isUserLogged: false }));
+    set(() => ({ accessToken: undefined }));
   },
 }));
