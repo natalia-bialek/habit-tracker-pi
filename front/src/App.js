@@ -1,17 +1,17 @@
-import { React, useEffect, useState } from 'react';
-import axios from './axios.js';
+import { React, useState } from 'react';
 import HabitList from './components/HabitList/HabitList';
 import Habit from './components/Habit/Habit';
 import styles from './App.module.css';
-import { useShallow } from 'zustand';
 import { useHabitStore, useUserStore } from './store';
 import EditHabit from './components/EditHabit/EditHabit';
 import Navigation from './components/Navigation/Navigation.js';
 import UserRegister from './components/UserRegister/UserRegister.js';
 import UserLogin from './components/UserLogin/UserLogin.js';
+import UserProfile from './components/UserProfile/UserProfile.js';
 
 function App() {
   const loggedUser = useUserStore((state) => state.isUserLogged);
+  const currentView = useUserStore((state) => state.currentView);
   const showingHabit = useHabitStore((state) => state.showingHabit);
   const editingHabit = useHabitStore((state) => state.editingHabit);
 
@@ -21,13 +21,18 @@ function App() {
     <div className={styles.app}>
       <Navigation />
       {loggedUser ? (
-        <div className={styles.app__habits}>
-          <HabitList />
-          {showingHabit.isVisible && showingHabit._id && <Habit />}
-          {editingHabit.mode === 'edit' && editingHabit.isVisible && (
-            <EditHabit _id={editingHabit._id} />
+        <div className={styles.app__content}>
+          {currentView === 'habits' && (
+            <div className={styles.app__habits}>
+              <HabitList />
+              {showingHabit.isVisible && showingHabit._id && <Habit />}
+              {editingHabit.mode === 'edit' && editingHabit.isVisible && (
+                <EditHabit _id={editingHabit._id} />
+              )}
+              {editingHabit.mode === 'add' && editingHabit.isVisible && <EditHabit />}
+            </div>
           )}
-          {editingHabit.mode === 'add' && editingHabit.isVisible && <EditHabit />}
+          {currentView === 'profile' && <UserProfile />}
         </div>
       ) : (
         <div className={styles.app__users}>

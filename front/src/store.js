@@ -36,6 +36,7 @@ export const useUserStore = create((set) => ({
   currentUserId: localStorage.getItem('user') || undefined,
   isUserLogged: localStorage.getItem('user') ? true : false,
   accessToken: localStorage.getItem('accessToken') || undefined,
+  currentView: 'habits', 
 
   loginUser: (data, token) => {
     localStorage.setItem('user', data);
@@ -51,5 +52,10 @@ export const useUserStore = create((set) => ({
     set(() => ({ currentUserId: undefined }));
     set(() => ({ isUserLogged: false }));
     set(() => ({ accessToken: undefined }));
+    set(() => ({ currentView: 'habits' }));
+  },
+
+  setCurrentView: (view) => {
+    set(() => ({ currentView: view }));
   },
 }));
