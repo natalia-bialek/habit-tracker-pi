@@ -7,7 +7,10 @@ export function useHabit(habitId) {
     return res.data;
   };
 
-  const { isLoading, isError, data, error } = useQuery(['habit', habitId], fetchHabit);
+  const { isLoading, isError, data, error } = useQuery({
+    queryKey: ['habit', habitId],
+    queryFn: fetchHabit,
+  });
 
   if (isError) {
     console.error(error.message);
