@@ -76,4 +76,9 @@
   margin-top: 8px;
 }
 
+.habit__chart {
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 24px;
+}
+
 /*# sourceMappingURL=Habit.module.css.map */

@@ -54,6 +54,22 @@ const HabitSchema = new mongoose.Schema({
     default: 0,
     min: 0,
   },
+  completionHistory: [
+    {
+      date: {
+        type: Date,
+        required: true,
+      },
+      completed: {
+        type: Boolean,
+        required: true,
+      },
+      progress: {
+        type: Number,
+        default: 0,
+      },
+    },
+  ],
   // startDate: {
   //   type: Date,
   //   default: Date.now,

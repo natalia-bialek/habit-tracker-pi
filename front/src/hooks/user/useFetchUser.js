@@ -9,7 +9,7 @@ export function useFetchUser() {
 
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ['user'],
-    queryFn: fetchUser
+    queryFn: fetchUser,
   });
 
   if (isError) console.error('ERROR: ', error.message);

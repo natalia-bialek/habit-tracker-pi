@@ -131,18 +131,107 @@ module.exports = {
         const lastProgressReset = habit.lastProgressReset
           ? new Date(habit.lastProgressReset)
           : null;
-        const needsProgressReset = !lastProgressReset || lastProgressReset < periodStart;
+
+        // Normalize lastProgressReset to start of day for comparison
+        if (lastProgressReset) {
+          lastProgressReset.setHours(0, 0, 0, 0);
+        }
+
+        const needsProgressReset =
+          !lastProgressReset || lastProgressReset.getTime() < periodStart.getTime();
 
         if (needsProgressReset) {
-          const wasCompletedInPreviousPeriod = habit.progress >= (habit.goal?.amount || 0);
+          // Calculate streak based on frequency period (no comeback - streak breaks on first gap)
+          const calculateStreak = (completionHistory, referenceDate, frequency) => {
+            if (!completionHistory || completionHistory.length === 0) {
+              return 0;
+            }
 
-          if (wasCompletedInPreviousPeriod) {
-            const oldStreak = habit.streak || 0;
-            habit.streak = oldStreak + 1;
-          } else {
-            habit.streak = 0;
-          }
+            const today = new Date(referenceDate);
+            today.setHours(0, 0, 0, 0);
 
+            // Helper function to get period key
+            const getPeriodKey = (date, freq) => {
+              const d = new Date(date);
+              d.setHours(0, 0, 0, 0);
+              if (freq === 'week') {
+                d.setDate(d.getDate() - d.getDay()); // Start of week
+                return d.toISOString().split('T')[0];
+              } else if (freq === 'month') {
+                return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+              } else {
+                return date.toISOString().split('T')[0];
+              }
+            };
+
+            // Group by periods
+            const periodMap = new Map();
+            completionHistory.forEach((entry) => {
+              const entryDate = new Date(entry.date);
+              entryDate.setHours(0, 0, 0, 0);
+              const periodKey = getPeriodKey(entryDate, frequency);
+
+              if (!periodMap.has(periodKey)) {
+                periodMap.set(periodKey, { hasProgress: false, days: [] });
+              }
+              const period = periodMap.get(periodKey);
+              period.days.push({ date: entryDate, progress: entry.progress });
+              if (entry.progress > 0) {
+                period.hasProgress = true;
+              }
+            });
+
+            // Get periods sorted by date (newest first)
+            const periods = Array.from(periodMap.entries())
+              .map(([key, value]) => ({
+                key,
+                ...value,
+                firstDate: value.days[0]?.date || new Date(key),
+              }))
+              .sort((a, b) => b.firstDate - a.firstDate);
+
+            if (periods.length === 0) return 0;
+
+            // Find current period
+            const currentPeriodKey = getPeriodKey(today, frequency);
+            const currentPeriodIdx = periods.findIndex((p) => p.key === currentPeriodKey);
+
+            let streakCount = 0;
+
+            // Start from current period (or latest if current not found) and go backwards
+            const startIdx = currentPeriodIdx >= 0 ? currentPeriodIdx : 0;
+
+            for (let i = startIdx; i < periods.length; i++) {
+              const period = periods[i];
+
+              if (period.hasProgress) {
+                // Period has progress - count it
+                if (frequency === 'day') {
+                  // For daily, count days with progress
+                  streakCount += period.days.filter((d) => d.progress > 0).length;
+                } else {
+                  // For weekly/monthly, count periods
+                  streakCount++;
+                }
+              } else {
+                // Period has no progress - streak broken
+                break;
+              }
+            }
+
+            return streakCount;
+          };
+
+          // Calculate streak based on completion history and frequency
+          const streak = calculateStreak(
+            habit.completionHistory,
+            now,
+            habit.goal?.frequency || 'day'
+          );
+
+          habit.streak = streak;
+
+          // Always reset progress when period changes
           habit.progress = 0;
           habit.lastProgressReset = now;
           updated = true;
@@ -195,12 +284,41 @@ module.exports = {
         return res.status(404).json({ message: 'Habit not found' });
       }
 
+      const now = getCurrentDate();
+      const today = new Date(now);
+      today.setHours(0, 0, 0, 0);
+
+      // Track completion history
+      if (isDone !== habit.isDone || progress !== habit.progress) {
+        // Find existing entry for today
+        const existingEntryIndex = habit.completionHistory.findIndex((entry) => {
+          const entryDate = new Date(entry.date);
+          entryDate.setHours(0, 0, 0, 0);
+          return entryDate.getTime() === today.getTime();
+        });
+
+        // completed is true if progress >= goal amount (full completion)
+        const completed = progress >= (habit.goal?.amount || 0);
+
+        if (existingEntryIndex >= 0) {
+          // Update existing entry
+          habit.completionHistory[existingEntryIndex].completed = completed;
+          habit.completionHistory[existingEntryIndex].progress = progress;
+        } else {
+          // Add new entry
+          habit.completionHistory.push({
+            date: today,
+            completed: completed,
+            progress: progress,
+          });
+        }
+      }
+
       habit.title = title;
       habit.goal = goal;
       habit.repeat = repeat;
       habit.isDone = isDone;
       habit.progress = progress;
-
 
       await user.save();
       res.status(200).json(user.habits);
@@ -229,6 +347,60 @@ module.exports = {
       res.status(200).json(user.habits);
     } catch (error) {
       return res.status(500).json({ message: error.message, controller: 'deleteHabit' });
+    }
+  },
+
+  async getHabitHistory(req, res) {
+    const userId = req.userId;
+    const habitId = req.params.habitId;
+    const days = parseInt(req.query.days) || 30;
+
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const habit = user.habits.id(habitId);
+      if (!habit) {
+        return res.status(404).json({ message: 'Habit not found' });
+      }
+
+      const now = getCurrentDate();
+      const startDate = new Date(now);
+      startDate.setDate(startDate.getDate() - days);
+      startDate.setHours(0, 0, 0, 0);
+
+      // Generate data for the last 30 days
+      const historyData = [];
+      for (let i = 0; i < days; i++) {
+        const date = new Date(startDate);
+        date.setDate(date.getDate() + i);
+        date.setHours(0, 0, 0, 0);
+
+        // Check if there's completion history for this date
+        const historyEntry = habit.completionHistory.find((entry) => {
+          const entryDate = new Date(entry.date);
+          entryDate.setHours(0, 0, 0, 0);
+          return entryDate.getTime() === date.getTime();
+        });
+
+        // Calculate completed from progress (for backward compatibility)
+        // completed = true if progress >= goal amount (full completion)
+        const historyProgress = historyEntry ? historyEntry.progress : 0;
+        const goalAmount = habit.goal?.amount || 0;
+        const completed = historyProgress >= goalAmount;
+
+        historyData.push({
+          date: date.toISOString().split('T')[0], // YYYY-MM-DD format
+          completed: completed, // Calculated from progress, kept for backward compatibility
+          progress: historyProgress,
+        });
+      }
+
+      res.status(200).json(historyData);
+    } catch (error) {
+      return res.status(500).json({ message: error.message, controller: 'getHabitHistory' });
     }
   },
 };

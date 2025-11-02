@@ -1,16 +1,19 @@
 import styles from './Habit.module.css';
 import { RRule } from 'rrule';
 import { useHabit } from '../../hooks/useHabit';
+import useHabitHistory from '../../hooks/useHabitHistory';
 import { useHabitStore } from '../../store';
 import { useDeleteHabit } from '../../hooks/useDeleteHabit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 import StreakDisplay from '../StreakDisplay/StreakDisplay';
+import HabitChart from '../HabitChart/HabitChart';
 
 function Habit() {
   const showingHabitId = useHabitStore((state) => state.showingHabit._id);
   let [habit, isLoading] = useHabit(showingHabitId);
+  const [habitHistoryData, isHistoryLoading] = useHabitHistory(showingHabitId);
   const deleteHabitMutation = useDeleteHabit();
 
   const initialHabit = useHabitStore((state) => state.initialHabit);
@@ -60,6 +63,18 @@ function Habit() {
               <div className={classNames(styles.habit__created_date, 'p-smallest')}>
                 Created: {habit.createdDate || null}
               </div>
+            </div>
+            <div className={styles.habit__chart}>
+              {isHistoryLoading ? (
+                <p>Loading chart data...</p>
+              ) : (
+                <HabitChart
+                  data={habitHistoryData}
+                  goalAmount={habit.goal.amount}
+                  frequency={habit.goal.frequency}
+                  currentStreak={habit.streak}
+                />
+              )}
             </div>
             <div className={styles.habit__bottom}>
               <button className='button-secondary' onClick={deleteHandler}>

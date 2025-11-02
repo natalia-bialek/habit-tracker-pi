@@ -9,6 +9,7 @@ router.post('/users/signin', userActions.signIn);
 
 router.get('/habits', verifyToken, habitActions.getAllHabits);
 router.get('/habits/:habitId', verifyToken, habitActions.getHabit);
+router.get('/habits/:habitId/history', verifyToken, habitActions.getHabitHistory);
 router.post('/habits', verifyToken, habitActions.createNewHabit);
 router.put('/habits/:habitId', verifyToken, habitActions.updateHabit);
 router.delete('/habits/:habitId', verifyToken, habitActions.deleteHabit);
