@@ -50,7 +50,8 @@ function EditHabit({ _id = '' }) {
     },
   });
 
-  const handleEditSubmit = () => {
+  const handleEditSubmit = (event) => {
+    event.preventDefault();
     updateHabitMutation.mutate({
       title: title,
       repeat: repeat,
@@ -65,7 +66,8 @@ function EditHabit({ _id = '' }) {
     });
   };
 
-  const handleAddSubmit = async () => {
+  const handleAddSubmit = async (event) => {
+    event.preventDefault();
     const newHabit = {
       title: title,
       repeat: repeat,
@@ -88,6 +90,7 @@ function EditHabit({ _id = '' }) {
         <form
           className={styles.editHabit}
           onSubmit={editingHabit.mode === 'edit' ? handleEditSubmit : handleAddSubmit}
+          method='post'
         >
           <div className={styles.editHabit__top}>
             <h2 className={styles.editHabit_header}>

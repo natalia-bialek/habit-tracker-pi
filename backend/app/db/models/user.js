@@ -11,9 +11,8 @@ const validateEmail = function (email) {
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
-    lowercase: true,
     required: [true, 'Field is required'],
-    match: [/^[a-zA-Z0-9]+$/, 'is invalid'],
+    match: [/^[a-zA-Z0-9\s-]+$/, 'is invalid'], // Allow letters, numbers, spaces, and hyphens
     maxLength: 50,
   },
   email: {
@@ -29,6 +28,11 @@ const UserSchema = new mongoose.Schema({
   password: String,
   hash: String,
   salt: String,
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
 });
 
 UserSchema.plugin(uniqueValidator, {

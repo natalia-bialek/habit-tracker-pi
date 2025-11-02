@@ -6,6 +6,7 @@ const { verifyToken } = require('../middleware/auth.js');
 
 router.post('/users/signup', userActions.signUp);
 router.post('/users/signin', userActions.signIn);
+router.post('/users/auth/google', userActions.googleAuth);
 
 router.get('/habits', verifyToken, habitActions.getAllHabits);
 router.get('/habits/:habitId', verifyToken, habitActions.getHabit);
