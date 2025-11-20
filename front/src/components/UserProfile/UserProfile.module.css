@@ -102,3 +102,7 @@
 .user-profile__password-toggle:hover {
   background-color: var(--secondary-color);
 }
+
+.user-profile__chart-container {
+  margin-top: 20px;
+}

@@ -6,6 +6,18 @@ const { OAuth2Client } = require('google-auth-library');
 
 const client = new OAuth2Client(config.GOOGLE_CLIENT_ID);
 
+// Debug date support (same as in habitsControllers)
+const DEBUG_MODE = process.env.DEBUG_MODE === 'true';
+const DEBUG_DATE = process.env.DEBUG_DATE ? new Date(process.env.DEBUG_DATE) : null;
+
+function getCurrentDate() {
+  if (DEBUG_MODE && DEBUG_DATE) {
+    console.log(`🔧 DEBUG MODE: Using custom date ${DEBUG_DATE.toISOString()}`);
+    return new Date(DEBUG_DATE);
+  }
+  return new Date();
+}
+
 // Function to replace Polish characters with ASCII equivalents, keep spaces, hyphens, and case
 const sanitizeUserName = (str) => {
   if (!str) return str;
@@ -273,6 +285,122 @@ module.exports = {
     } catch (error) {
       console.error('Google Auth Error:', error);
       return res.status(500).json({ message: error.message, controller: 'googleAuth' });
+    }
+  },
+
+  async saveEnergyLevel(req, res) {
+    const userId = req.userId;
+    const { level } = req.body;
+
+    if (!level || level < 1 || level > 10) {
+      return res.status(400).json({ message: 'Energy level must be between 1 and 10' });
+    }
+
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Get today's date at midnight (using debug date if available)
+      const today = getCurrentDate();
+      today.setHours(0, 0, 0, 0);
+
+      // Check if there's already an entry for today
+      const existingIndex = user.energyLevels.findIndex((entry) => {
+        const entryDate = new Date(entry.date);
+        entryDate.setHours(0, 0, 0, 0);
+        return entryDate.getTime() === today.getTime();
+      });
+
+      if (existingIndex !== -1) {
+        // Update existing entry
+        user.energyLevels[existingIndex].level = level;
+      } else {
+        // Add new entry
+        user.energyLevels.push({
+          date: today,
+          level: level,
+        });
+      }
+
+      await user.save();
+
+      res.status(200).json({
+        message: 'Energy level saved successfully',
+        date: today.toISOString().split('T')[0],
+        level: level,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message, controller: 'saveEnergyLevel' });
+    }
+  },
+
+  async getEnergyLevels(req, res) {
+    const userId = req.userId;
+
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Get date 30 days ago (using debug date if available)
+      const today = getCurrentDate();
+      today.setHours(0, 0, 0, 0);
+      const thirtyDaysAgo = new Date(today);
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      thirtyDaysAgo.setHours(0, 0, 0, 0);
+
+      // Filter energy levels from last 30 days
+      const recentLevels = user.energyLevels
+        .filter((entry) => {
+          const entryDate = new Date(entry.date);
+          entryDate.setHours(0, 0, 0, 0);
+          return entryDate >= thirtyDaysAgo;
+        })
+        .map((entry) => ({
+          date: new Date(entry.date).toISOString().split('T')[0],
+          level: entry.level,
+        }))
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      // Include current date (with debug_date support) so frontend can use it for chart generation
+      const currentDate = getCurrentDate();
+      currentDate.setHours(0, 0, 0, 0);
+
+      res.status(200).json({
+        levels: recentLevels,
+        currentDate: currentDate.toISOString().split('T')[0],
+      });
+    } catch (error) {
+      return res.status(500).json({ message: error.message, controller: 'getEnergyLevels' });
+    }
+  },
+
+  async hasEnergyLevelToday(req, res) {
+    const userId = req.userId;
+
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Get today's date at midnight (using debug date if available)
+      const today = getCurrentDate();
+      today.setHours(0, 0, 0, 0);
+
+      // Check if there's an entry for today
+      const hasEntry = user.energyLevels.some((entry) => {
+        const entryDate = new Date(entry.date);
+        entryDate.setHours(0, 0, 0, 0);
+        return entryDate.getTime() === today.getTime();
+      });
+
+      res.status(200).json({ hasEnergyLevelToday: hasEntry });
+    } catch (error) {
+      return res.status(500).json({ message: error.message, controller: 'hasEnergyLevelToday' });
     }
   },
 };

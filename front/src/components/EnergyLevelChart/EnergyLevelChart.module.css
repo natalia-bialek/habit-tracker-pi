@@ -1,0 +1,51 @@
+.chartContainer {
+  width: 100%;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chartTitle {
+  margin: 0 0 20px 0;
+  font-size: 19px;
+  font-weight: 600;
+  color: #333;
+}
+
+.chartWrapper {
+  width: 100%;
+}
+
+.noData {
+  text-align: center;
+  color: #666;
+  padding: 40px 20px;
+  font-size: 15px;
+}
+
+.tooltip {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.tooltipDate {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.tooltipLevel {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.tooltipLevel strong {
+  color: #ff6b6b;
+  font-weight: 600;
+}

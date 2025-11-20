@@ -18,5 +18,8 @@ router.delete('/habits/:habitId', verifyToken, habitActions.deleteHabit);
 router.get('/users/profile', verifyToken, userActions.getProfile);
 router.put('/users/profile', verifyToken, userActions.updateProfile);
 router.put('/users/change-password', verifyToken, userActions.changePassword);
+router.post('/users/energy-level', verifyToken, userActions.saveEnergyLevel);
+router.get('/users/energy-levels', verifyToken, userActions.getEnergyLevels);
+router.get('/users/energy-level/today', verifyToken, userActions.hasEnergyLevelToday);
 
 module.exports = router;

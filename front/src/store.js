@@ -36,7 +36,7 @@ export const useUserStore = create((set) => ({
   currentUserId: localStorage.getItem('user') || undefined,
   isUserLogged: localStorage.getItem('user') ? true : false,
   accessToken: localStorage.getItem('accessToken') || undefined,
-  currentView: 'habits', 
+  currentView: 'habits',
 
   loginUser: (data, token) => {
     localStorage.setItem('user', data);
@@ -49,6 +49,10 @@ export const useUserStore = create((set) => ({
   logoutUser: () => {
     localStorage.removeItem('user');
     localStorage.removeItem('accessToken');
+    // Clear energy level related localStorage
+    localStorage.removeItem('todayEnergyLevel');
+    localStorage.removeItem('todaySuggestedHabits');
+    localStorage.removeItem('energyModalLastShown');
     set(() => ({ currentUserId: undefined }));
     set(() => ({ isUserLogged: false }));
     set(() => ({ accessToken: undefined }));

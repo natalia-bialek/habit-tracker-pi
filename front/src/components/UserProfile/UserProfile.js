@@ -3,6 +3,10 @@ import styles from './UserProfile.module.css';
 import { useFetchUser } from '../../hooks/user/useFetchUser.js';
 import { useUpdateProfile } from '../../hooks/user/useUpdateProfile.js';
 import { useUpdatePassword } from '../../hooks/user/useUpdatePassword.js';
+import { useFetchEnergyLevels } from '../../hooks/user/useFetchEnergyLevels.js';
+import { useFetchHabits } from '../../hooks/useFetchHabits.js';
+import EnergyLevelModal from '../EnergyLevelModal/EnergyLevelModal.js';
+import EnergyLevelChart from '../EnergyLevelChart/EnergyLevelChart.js';
 
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -28,6 +32,9 @@ function UserProfile() {
   const [user, isLoadingUser] = useFetchUser();
   const updateProfileMutation = useUpdateProfile();
   const updatePasswordMutation = useUpdatePassword();
+  const [energyLevels, isLoadingEnergyLevels] = useFetchEnergyLevels();
+  const [habits] = useFetchHabits();
+  const [showEnergyModal, setShowEnergyModal] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -266,8 +273,30 @@ function UserProfile() {
         </form>
       </div>
 
+      <div className={styles['user-profile__section']}>
+        <h3 className={styles['user-profile__section-title']}>Energy Level</h3>
+        <button
+          onClick={() => setShowEnergyModal(true)}
+          className={`button-primary ${styles['user-profile__button']}`}
+        >
+          Change Energy Level
+        </button>
+        {!isLoadingEnergyLevels && (
+          <div className={styles['user-profile__chart-container']}>
+            {console.log('UserProfile - energyLevels:', energyLevels)}
+            <EnergyLevelChart data={energyLevels || []} currentDate={energyLevels?.currentDate} />
+          </div>
+        )}
+      </div>
+
       {message && <div className={styles['user-profile__message']}>{message}</div>}
       {errorMessage && <div className={styles['user-profile__error']}>{errorMessage}</div>}
+
+      <EnergyLevelModal
+        isOpen={showEnergyModal}
+        onClose={() => setShowEnergyModal(false)}
+        totalHabits={habits?.length || 0}
+      />
     </div>
   );
 }
