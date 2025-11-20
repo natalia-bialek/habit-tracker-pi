@@ -1,14 +1,19 @@
 import styles from './Habit.module.css';
+import { RRule } from 'rrule';
 import { useHabit } from '../../hooks/useHabit';
-import { useHabitStore, useUserStore } from '../../store';
+import useHabitHistory from '../../hooks/useHabitHistory';
+import { useHabitStore } from '../../store';
 import { useDeleteHabit } from '../../hooks/useDeleteHabit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
+import StreakDisplay from '../StreakDisplay/StreakDisplay';
+import HabitChart from '../HabitChart/HabitChart';
 
 function Habit() {
   const showingHabitId = useHabitStore((state) => state.showingHabit._id);
   let [habit, isLoading] = useHabit(showingHabitId);
+  const [habitHistoryData, isHistoryLoading] = useHabitHistory(showingHabitId);
   const deleteHabitMutation = useDeleteHabit();
 
   const initialHabit = useHabitStore((state) => state.initialHabit);
@@ -39,26 +44,44 @@ function Habit() {
               </button>
             </div>
             <div className={styles.habit__middle}>
-              <div className={styles.habit__goal}>
-                <strong>Cel:</strong>
+              <div className={styles.habit__detail}>
+                <strong>Goal:</strong>
                 <span>{habit.goal.amount || initialHabit.goal.amount}</span>
                 <span>{habit.goal.unit || initialHabit.goal.unit}</span>
-                na
+                per
                 <span>{habit.goal.frequency || initialHabit.goal.frequency}</span>
               </div>
-              <div className={classNames(styles.habit__help_text, 'p_small')}>
-                Aby edytować m.in. progress, wejdź w tryb edycji.
+              {habit.repeat && (
+                <div className={styles.habit__detail}>
+                  <strong>Repeats:</strong>
+                  <span>{RRule.fromString(habit.repeat).toText()}</span>
+                </div>
+              )}
+              <div className={styles.habit__streak}>
+                <StreakDisplay streak={habit.streak} repeat={habit.repeat} />
               </div>
               <div className={classNames(styles.habit__created_date, 'p-smallest')}>
-                Utworzono: {habit.createdDate || null}
+                Created: {habit.createdDate || null}
               </div>
+            </div>
+            <div className={styles.habit__chart}>
+              {isHistoryLoading ? (
+                <p>Loading chart data...</p>
+              ) : (
+                <HabitChart
+                  data={habitHistoryData}
+                  goalAmount={habit.goal.amount}
+                  frequency={habit.goal.frequency}
+                  currentStreak={habit.streak}
+                />
+              )}
             </div>
             <div className={styles.habit__bottom}>
               <button className='button-secondary' onClick={deleteHandler}>
-                usuń
+                Delete
               </button>
               <button className='button-primary' onClick={() => setEditingHabit(habit._id, 'edit')}>
-                edytuj
+                Edit
               </button>
             </div>
           </div>

@@ -1,11 +1,17 @@
 :root {
   --primary-color: #34526f;
+  --primary-color-lighter: #5686b3;
+  --primary-color-lightest: #c1ddf8;
   --secondary-color: #d1d1d1;
+  --error-color-dark: #721c24;
+  --error-color-light: #f8d7da;
   --border-color: rgb(198, 202, 207);
   --text-font-family: 'Montserrat', sans-serif;
   --h1-font-family: 'Merriweather Sans', sans-serif;
   --header-font-family: 'Open Sans', serif;
   --black-color: #000000e6;
+  --font-size-sm: 14px;
+  --font-size-xs: 12px;
   font-size: 16px;
   @media screen and (min-width: var(--tablet-res)) {
   }
@@ -37,12 +43,16 @@ select {
   font-size: 14px;
   line-height: 1.5;
   border-radius: 3px;
+  margin: 0;
+}
+
+input[type='number'] {
+  max-width: 80px;
 }
 
 label {
   font-weight: 600;
 }
-
 
 h1 {
   font-family: var(--h1-font-family);
@@ -96,9 +106,9 @@ button {
   border-radius: 4px;
   cursor: pointer;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   letter-spacing: 1.25px;
   min-width: 150px;
   min-height: 45px;
@@ -150,7 +160,8 @@ button:hover {
 }
 
 .error-container {
-  color: rgb(190, 46, 46);
+  color: var(--error-color-dark);
+  background-color: var(--error-color-light);
   text-transform: uppercase;
   font-weight: 700;
   display: block;
@@ -161,6 +172,10 @@ button:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.bold {
+  font-weight: 600;
 }
 
 /* 

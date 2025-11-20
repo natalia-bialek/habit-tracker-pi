@@ -7,7 +7,7 @@
   align-items: center;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 8px 8px;
+  gap: 4px 4px;
   grid-auto-flow: row;
   @media screen and (min-width: 768px) {
     flex-direction: row;
@@ -37,6 +37,15 @@
   transform: translate(-50%, -50%);
 }
 
-.navigation__add {
+.navigation__bottomButton {
   grid-column: 1 / span 2;
+}
+
+.navigation__button.active {
+  background: var(--primary-color-lighter);
+  color: white;
+}
+
+.navigation__logout {
+  background: var(--error-color-light);
 }

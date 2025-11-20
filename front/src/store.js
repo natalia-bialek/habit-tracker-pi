@@ -1,19 +1,22 @@
 import { create } from 'zustand';
-import axios from './axios.js';
 
 export const useHabitStore = create((set) => ({
+  isOverlayVisible: false,
   showingHabit: { _id: undefined, isVisible: false },
   editingHabit: { _id: undefined, isVisible: false, mode: undefined },
   initialHabit: {
     title: '',
-    repeat: 'codziennie',
+    repeat: 'RRULE:FREQ=DAILY;INTERVAL=1',
     goal: {
       amount: 1,
-      unit: 'razy',
-      frequency: 'dzień',
+      unit: 'times',
+      frequency: 'day',
     },
     progress: 0,
     isDone: false,
+  },
+  setIsOverlayVisible: (value) => {
+    set(() => ({ isOverlayVisible: value }));
   },
   setShowingHabit: (newId, isVisible) => {
     set(() => ({ showingHabit: { _id: newId, isVisible: isVisible } }));
@@ -32,14 +35,27 @@ export const useHabitStore = create((set) => ({
 export const useUserStore = create((set) => ({
   currentUserId: localStorage.getItem('user') || undefined,
   isUserLogged: localStorage.getItem('user') ? true : false,
-  loginUser: (data) => {
+  accessToken: localStorage.getItem('accessToken') || undefined,
+  currentView: 'habits', 
+
+  loginUser: (data, token) => {
     localStorage.setItem('user', data);
+    localStorage.setItem('accessToken', token);
     set(() => ({ currentUserId: data }));
     set(() => ({ isUserLogged: true }));
+    set(() => ({ accessToken: token }));
   },
+
   logoutUser: () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
     set(() => ({ currentUserId: undefined }));
     set(() => ({ isUserLogged: false }));
+    set(() => ({ accessToken: undefined }));
+    set(() => ({ currentView: 'habits' }));
+  },
+
+  setCurrentView: (view) => {
+    set(() => ({ currentView: view }));
   },
 }));

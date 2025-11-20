@@ -2,26 +2,21 @@ const express = require('express');
 const router = express.Router();
 const habitActions = require('../controllers/api/habitsControllers.js');
 const userActions = require('../controllers/api/userControllers.js');
+const { verifyToken } = require('../middleware/auth.js');
 
-//show all habits
-router.get('/users/:userId/habits', habitActions.getAllHabits);
-
-//show this one habit
-router.get('/users/:userId/habits/:habitId', habitActions.getHabit);
-
-//create new habit
-router.post('/users/:userId/habits', habitActions.createNewHabit);
-
-//edit existing habit
-router.put('/users/:userId/habits/:habitId', habitActions.updateHabit);
-
-//delete habit
-router.delete('/users/:userId/habits/:habitId', habitActions.deleteHabit);
-
-//register
 router.post('/users/signup', userActions.signUp);
-
-//login
 router.post('/users/signin', userActions.signIn);
+router.post('/users/auth/google', userActions.googleAuth);
+
+router.get('/habits', verifyToken, habitActions.getAllHabits);
+router.get('/habits/:habitId', verifyToken, habitActions.getHabit);
+router.get('/habits/:habitId/history', verifyToken, habitActions.getHabitHistory);
+router.post('/habits', verifyToken, habitActions.createNewHabit);
+router.put('/habits/:habitId', verifyToken, habitActions.updateHabit);
+router.delete('/habits/:habitId', verifyToken, habitActions.deleteHabit);
+
+router.get('/users/profile', verifyToken, userActions.getProfile);
+router.put('/users/profile', verifyToken, userActions.updateProfile);
+router.put('/users/change-password', verifyToken, userActions.changePassword);
 
 module.exports = router;

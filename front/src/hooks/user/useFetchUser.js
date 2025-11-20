@@ -1,15 +1,15 @@
-import axios from '../axios.js';
+import axios from '../../axios.js';
 import { useQuery } from '@tanstack/react-query';
 
-export function useFetchHabits() {
-  const fetchHabits = async () => {
-    const res = await axios.get('/habits'); // Usuń userId z URL
+export function useFetchUser() {
+  const fetchUser = async () => {
+    const res = await axios.get('/users/profile');
     return res.data;
   };
 
   const { isLoading, isError, data, error } = useQuery({
-    queryKey: ['habits'],
-    queryFn: fetchHabits,
+    queryKey: ['user'],
+    queryFn: fetchUser,
   });
 
   if (isError) console.error('ERROR: ', error.message);

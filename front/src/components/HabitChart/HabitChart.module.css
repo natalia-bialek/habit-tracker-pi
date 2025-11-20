@@ -1,0 +1,88 @@
+.chartContainer {
+  margin: 20px 0;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chartContainer h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.chartWrapper {
+  margin-bottom: 15px;
+}
+
+.tooltip {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.tooltipStatusIcon {
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+.tooltipStatusIcon.Completed {
+  color: #4caf50;
+}
+
+.tooltipStatusIcon.PartialyCompleted {
+  color: #ff9800;
+}
+
+.tooltipStatusIcon.NotCompleted {
+  color: #e0e0e0;
+}
+
+.tooltipDate {
+  font-weight: 600;
+  margin: 0 0 5px 0;
+  color: #333;
+}
+
+.tooltipStatus {
+  margin: 0 0 5px 0;
+  color: #666;
+}
+
+.tooltipStreak {
+  margin: 0 0 5px 0;
+  color: #4caf50;
+  font-weight: 500;
+}
+
+.tooltipProgress {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.chartLegend {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.legendDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+}

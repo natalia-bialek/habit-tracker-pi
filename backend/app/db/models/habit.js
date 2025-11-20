@@ -13,21 +13,19 @@ const HabitSchema = new mongoose.Schema({
     },
     unit: {
       type: String,
-      enum: ['razy', 'min'],
-      default: 'razy',
+      enum: ['times', 'min'],
+      default: 'times',
       required: true,
     },
     frequency: {
       type: String,
-      enum: ['dzień', 'tydzień', 'miesiąc'],
-      default: 'dzień',
+      enum: ['day', 'week', 'month'],
+      default: 'day',
       required: true,
     },
   },
   repeat: {
     type: String,
-    enum: ['codziennie', 'co tydzień', 'co miesiąc'],
-    default: 'codziennie',
     required: true,
   },
   isDone: {
@@ -42,6 +40,36 @@ const HabitSchema = new mongoose.Schema({
   createdDate: {
     type: String,
   },
+  lastCompletedDate: {
+    type: Date,
+  },
+  lastProgressReset: {
+    type: Date,
+  },
+  lastIsDoneReset: {
+    type: Date,
+  },
+  streak: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
+  completionHistory: [
+    {
+      date: {
+        type: Date,
+        required: true,
+      },
+      completed: {
+        type: Boolean,
+        required: true,
+      },
+      progress: {
+        type: Number,
+        default: 0,
+      },
+    },
+  ],
   // startDate: {
   //   type: Date,
   //   default: Date.now,

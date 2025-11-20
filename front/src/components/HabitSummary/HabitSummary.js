@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styles from './HabitSummary.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useHabitStore } from '../../store';
 import { useUpdateHabit } from '../../hooks/useUpdateHabit';
+import StreakDisplay from '../StreakDisplay/StreakDisplay';
+
 function HabitSummary({ habit }) {
   const updateHabitMutation = useUpdateHabit(habit._id);
 
   const [isMarkedDone, setIsMarkedDone] = useState(habit.isDone);
-  const [buttonText, setButtonText] = useState(isMarkedDone ? 'Zrobione' : 'Do zrobienia');
+  const [buttonText, setButtonText] = useState(isMarkedDone ? 'Done' : 'To do');
 
   const [progress, setProgress] = useState(habit.progress);
   const [progressPercentage, setProgressPercentage] = useState(
@@ -16,7 +18,7 @@ function HabitSummary({ habit }) {
   );
   const goalAmount = habit.goal.amount;
   const setShowingHabit = useHabitStore((state) => state.setShowingHabit);
-  const isOverlayVisible = useHabitStore((state) => state.isOverlayVisible);
+  const setIsOverlayVisible = useHabitStore((state) => state.setIsOverlayVisible);
 
   const handleMarkAsDone = async () => {
     if (progress + 1 <= goalAmount) {
@@ -27,15 +29,14 @@ function HabitSummary({ habit }) {
       setProgressPercentage(newProgressPercentage);
 
       let newIsDone = isMarkedDone;
-      if (newProgressPercentage >= 100) {
-        newIsDone = !isMarkedDone;
-        setIsMarkedDone(newIsDone);
-      }
+      newIsDone = true;
+      setIsMarkedDone(newIsDone);
 
       updateHabitMutation.mutate({
         ...habit,
         isDone: newIsDone,
         progress: newProgress,
+        lastCompletedDate: new Date(),
       });
     }
   };
@@ -46,7 +47,7 @@ function HabitSummary({ habit }) {
         <h3
           onClick={() => {
             setShowingHabit(habit._id, true);
-            isOverlayVisible(true);
+            setIsOverlayVisible(true);
           }}
           className='truncate'
         >
@@ -60,19 +61,20 @@ function HabitSummary({ habit }) {
             {progress}/{goalAmount}
           </div>
         </div>
+        <div className={styles.summary__streak}>
+          <StreakDisplay streak={habit.streak} repeat={habit.repeat} />
+        </div>
       </div>
 
       <button
         className='button-primary'
         onClick={handleMarkAsDone}
-        onMouseEnter={() => !isMarkedDone && setButtonText('Kliknij, aby zmienić')} // Change text on hover
-        onMouseLeave={() =>
-          !isMarkedDone && setButtonText(isMarkedDone ? 'Zrobione' : 'Do zrobienia')
-        } // Change text on hover
+        onMouseEnter={() => !isMarkedDone && setButtonText('Change the status')} // Change text on hover
+        onMouseLeave={() => !isMarkedDone && setButtonText(isMarkedDone ? 'Done' : 'To do')} // Change text on hover
       >
-        {buttonText === 'Zrobione' ? (
+        {buttonText === 'Done' ? (
           <>
-            <FontAwesomeIcon icon={faCheck} /> Zrobione
+            <FontAwesomeIcon icon={faCheck} /> Done
           </>
         ) : (
           buttonText

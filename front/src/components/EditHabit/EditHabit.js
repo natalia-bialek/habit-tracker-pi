@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './EditHabit.module.css';
 import { useHabit } from '../../hooks/useHabit';
 import { useUpdateHabit } from '../../hooks/useUpdateHabit';
@@ -7,6 +7,7 @@ import axios from '../../axios.js';
 import { useMutation } from '@tanstack/react-query';
 import * as dateFnsTz from 'date-fns-tz';
 import classNames from 'classnames';
+import RepeatPicker from '../RepeatPicker/RepeatPicker.js';
 
 function EditHabit({ _id = '' }) {
   const updateHabitMutation = useUpdateHabit(_id);
@@ -39,7 +40,7 @@ function EditHabit({ _id = '' }) {
 
   const mutation = useMutation({
     mutationFn: async (newHabit) => {
-      return await axios.post(`/users/${userId}/habits`, newHabit);
+      return await axios.post('/habits', newHabit);
     },
     onSuccess: (data) => {
       setEditingHabit(data._id, 'add');
@@ -49,7 +50,8 @@ function EditHabit({ _id = '' }) {
     },
   });
 
-  const handleEditSubmit = () => {
+  const handleEditSubmit = (event) => {
+    event.preventDefault();
     updateHabitMutation.mutate({
       title: title,
       repeat: repeat,
@@ -64,7 +66,8 @@ function EditHabit({ _id = '' }) {
     });
   };
 
-  const handleAddSubmit = async () => {
+  const handleAddSubmit = async (event) => {
+    event.preventDefault();
     const newHabit = {
       title: title,
       repeat: repeat,
@@ -87,16 +90,17 @@ function EditHabit({ _id = '' }) {
         <form
           className={styles.editHabit}
           onSubmit={editingHabit.mode === 'edit' ? handleEditSubmit : handleAddSubmit}
+          method='post'
         >
           <div className={styles.editHabit__top}>
             <h2 className={styles.editHabit_header}>
-              {editingHabit.mode === 'edit' ? 'Edytuj nawyk' : 'Dodaj nowy nawyk'}
+              {editingHabit.mode === 'edit' ? 'Edit habit' : 'Add new habit'}
             </h2>
           </div>
 
           <div className={styles.editHabit__middle}>
             <div className={classNames(styles.editHabit__field)}>
-              <label>Tytuł</label>
+              <label>Title</label>
               <input
                 id='input_title'
                 className={styles.editHabit__input}
@@ -109,7 +113,7 @@ function EditHabit({ _id = '' }) {
               />
             </div>
             <div className={classNames(styles.editHabit__field)}>
-              <label>Cel</label>
+              <label>Goal</label>
               <div className={styles.editHabit__goal}>
                 <input
                   id='input_amount'
@@ -127,21 +131,26 @@ function EditHabit({ _id = '' }) {
                   onChange={(e) => setUnit(e.target.value)}
                   value={unit}
                 >
-                  <option value='razy'>Razy</option>
+                  <option value='razy'>Times</option>
                   <option value='min'>Min</option>
                 </select>
-                <p>na</p>
+                <p>per</p>
                 <select
                   id='select_frequency'
                   name='frequency'
                   onChange={(e) => setFrequency(e.target.value)}
                   value={frequency}
                 >
-                  <option value='dzień'>Dzień</option>
-                  <option value='tydzień'>Tydzień</option>
-                  <option value='miesiąc'>Miesiąc</option>
+                  <option value='day'>Day</option>
+                  <option value='week'>Week</option>
+                  <option value='month'>Month</option>
                 </select>
               </div>
+            </div>
+
+            <div className={classNames(styles.editHabit__field)}>
+              <label>Repeat pattern</label>
+              <RepeatPicker value={repeat} onChange={setRepeat} />
             </div>
 
             {editingHabit.mode === 'edit' && (
@@ -164,10 +173,10 @@ function EditHabit({ _id = '' }) {
 
           <div className={styles.editHabit__bottom}>
             <button type='button' className='button-secondary' onClick={() => hideEditHabit()}>
-              Anuluj
+              Cancel
             </button>
             <button type='submit' className='button-primary'>
-              Zapisz
+              Save
             </button>
           </div>
         </form>

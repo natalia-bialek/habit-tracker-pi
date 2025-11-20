@@ -1,15 +1,16 @@
 import axios from '../axios.js';
 import { useQuery } from '@tanstack/react-query';
-import { useUserStore } from '../store.js';
 
 export function useHabit(habitId) {
-  const userId = useUserStore((state) => state.currentUserId);
   const fetchHabit = async () => {
-    const res = await axios.get(`/users/${userId}/habits/${habitId}`);
+    const res = await axios.get(`/habits/${habitId}`);
     return res.data;
   };
 
-  const { isLoading, isError, data, error } = useQuery(['habit', habitId], fetchHabit);
+  const { isLoading, isError, data, error } = useQuery({
+    queryKey: ['habit', habitId],
+    queryFn: fetchHabit,
+  });
 
   if (isError) {
     console.error(error.message);
