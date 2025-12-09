@@ -4,12 +4,13 @@ import { useHabit } from '../../hooks/useHabit';
 import { useUpdateHabit } from '../../hooks/useUpdateHabit';
 import { useHabitStore, useUserStore } from '../../store';
 import axios from '../../axios.js';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import * as dateFnsTz from 'date-fns-tz';
 import classNames from 'classnames';
 import RepeatPicker from '../RepeatPicker/RepeatPicker.js';
 
 function EditHabit({ _id = '' }) {
+  const queryClient = useQueryClient();
   const updateHabitMutation = useUpdateHabit(_id);
 
   const data = useHabit(_id);
@@ -20,7 +21,6 @@ function EditHabit({ _id = '' }) {
   const userId = useUserStore((state) => state.currentUserId);
 
   const hideEditHabit = useHabitStore((state) => state.hideEditHabit);
-  const setEditingHabit = useHabitStore((state) => state.hideEditHabit);
 
   // initial values
   const [title, setTitle] = useState(habit?.title || initialHabit.title);
@@ -42,8 +42,9 @@ function EditHabit({ _id = '' }) {
     mutationFn: async (newHabit) => {
       return await axios.post('/habits', newHabit);
     },
-    onSuccess: (data) => {
-      setEditingHabit(data._id, 'add');
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['habits'] });
+      hideEditHabit();
     },
     onError: (error) => {
       console.error(error.message);
