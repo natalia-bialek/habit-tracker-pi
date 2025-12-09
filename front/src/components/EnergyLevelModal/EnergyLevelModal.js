@@ -16,19 +16,20 @@ import { useSaveEnergyLevel } from '../../hooks/user/useSaveEnergyLevel.js';
 const EnergyLevelModal = ({ isOpen, onClose, totalHabits }) => {
   const [energyLevel, setEnergyLevel] = useState(5);
   const maxHabits = Math.max(totalHabits || 1, 1);
+
   const saveEnergyLevelMutation = useSaveEnergyLevel();
 
   // Calculate suggested habits based on energy level
   const getSuggestedHabits = () => {
     let suggested;
     if (energyLevel <= 3) {
-      suggested = Math.max(1, Math.floor(maxHabits * 0.2));
+      suggested = Math.max(1, Math.round(maxHabits * 0.2));
     } else if (energyLevel <= 5) {
-      suggested = Math.max(1, Math.floor(maxHabits * 0.4));
+      suggested = Math.max(1, Math.round(maxHabits * 0.4));
     } else if (energyLevel <= 7) {
-      suggested = Math.max(1, Math.floor(maxHabits * 0.6));
+      suggested = Math.max(1, Math.round(maxHabits * 0.6));
     } else {
-      suggested = Math.max(1, Math.floor(maxHabits * 0.8));
+      suggested = Math.max(1, Math.round(maxHabits * 0.8));
     }
     // Don't suggest more than available habits
     return Math.min(suggested, maxHabits);

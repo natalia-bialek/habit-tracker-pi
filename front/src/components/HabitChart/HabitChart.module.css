@@ -86,3 +86,9 @@
   border-radius: 50%;
   border: 1px solid #ddd;
 }
+
+.legendLine {
+  width: 20px;
+  height: 3px;
+  border-radius: 2px;
+}

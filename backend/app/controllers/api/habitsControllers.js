@@ -68,53 +68,92 @@ module.exports = {
         const now = getCurrentDate();
 
         let needsIsDoneReset = false;
+        const today = new Date(now);
+        today.setHours(0, 0, 0, 0);
+
         if (habit.repeat) {
           try {
-            const rule = RRule.fromString(habit.repeat);
-            const today = new Date(now);
-            today.setHours(0, 0, 0, 0);
-
             let isTodayOccurrence = false;
 
-            if (habit.repeat.includes('FREQ=WEEKLY')) {
-              const todayWeekday = today.getDay();
+            // For simple daily habits (FREQ=DAILY without complex rules), every day is an occurrence
+            if (habit.repeat.includes('FREQ=DAILY') && !habit.repeat.includes('BYDAY')) {
+              isTodayOccurrence = true;
+            }
+            // For weekly habits with specific days
+            else if (habit.repeat.includes('FREQ=WEEKLY') && habit.repeat.includes('BYDAY')) {
+              const rule = RRule.fromString(habit.repeat);
               const ruleOptions = rule.options;
 
               if (ruleOptions.byweekday && ruleOptions.byweekday.length > 0) {
+                const todayWeekday = today.getDay();
+                // RRule uses Monday=0, JavaScript uses Sunday=0
                 const rruleWeekday = (todayWeekday + 6) % 7;
-                const ruleWeekday = ruleOptions.byweekday[0];
-                isTodayOccurrence = rruleWeekday === ruleWeekday;
-              } else {
-                const nextOccurrence = rule.after(new Date(today.getTime() - 1), true);
-                isTodayOccurrence =
-                  nextOccurrence && nextOccurrence.toDateString() === today.toDateString();
+                isTodayOccurrence = ruleOptions.byweekday.some(
+                  (day) => (typeof day === 'number' ? day : day.weekday) === rruleWeekday
+                );
               }
-            } else {
-              const nextOccurrence = rule.after(new Date(today.getTime() - 1), true);
+            }
+            // For other patterns, use RRule calculation with proper date
+            else {
+              const rule = RRule.fromString(habit.repeat);
+              // Use yesterday as reference to check if today is an occurrence
+              const yesterday = new Date(today);
+              yesterday.setDate(yesterday.getDate() - 1);
+              const nextOccurrence = rule.after(yesterday, true);
               isTodayOccurrence =
                 nextOccurrence && nextOccurrence.toDateString() === today.toDateString();
             }
 
             if (isTodayOccurrence) {
+              // Check if goal for the current period has been achieved
+              const goalAmount = habit.goal?.amount || 1;
+              const currentProgress = habit.progress || 0;
+              const goalAchieved = currentProgress >= goalAmount;
+
+              if (goalAchieved) {
+                // Goal achieved for this period - don't reset isDone
+                needsIsDoneReset = false;
+              } else {
+                // Goal not yet achieved - check if we need to reset
+                const lastIsDoneReset = habit.lastIsDoneReset
+                  ? new Date(habit.lastIsDoneReset)
+                  : null;
+
+                // Normalize lastIsDoneReset for comparison
+                const lastIsDoneResetNormalized = lastIsDoneReset
+                  ? new Date(lastIsDoneReset)
+                  : null;
+                if (lastIsDoneResetNormalized) {
+                  lastIsDoneResetNormalized.setHours(0, 0, 0, 0);
+                }
+
+                needsIsDoneReset =
+                  !lastIsDoneResetNormalized ||
+                  lastIsDoneResetNormalized.getTime() < today.getTime();
+              }
+            }
+          } catch (e) {
+            // Fallback: treat as daily habit, but respect goal achievement
+            const goalAmount = habit.goal?.amount || 1;
+            const currentProgress = habit.progress || 0;
+            const goalAchieved = currentProgress >= goalAmount;
+
+            if (!goalAchieved) {
               const lastIsDoneReset = habit.lastIsDoneReset
                 ? new Date(habit.lastIsDoneReset)
                 : null;
-              needsIsDoneReset = !lastIsDoneReset || lastIsDoneReset < today;
+              if (lastIsDoneReset) {
+                lastIsDoneReset.setHours(0, 0, 0, 0);
+              }
+              needsIsDoneReset = !lastIsDoneReset || lastIsDoneReset.getTime() < today.getTime();
             }
-          } catch (e) {
-            const lastIsDoneReset = habit.lastIsDoneReset ? new Date(habit.lastIsDoneReset) : null;
-            const today = new Date(now);
-            today.setHours(0, 0, 0, 0);
-            needsIsDoneReset = !lastIsDoneReset || lastIsDoneReset < today;
           }
         }
 
         if (needsIsDoneReset) {
-          if (habit.progress < (habit.goal?.amount || 0)) {
-            habit.isDone = false;
-            habit.lastIsDoneReset = now;
-            updated = true;
-          }
+          habit.isDone = false;
+          habit.lastIsDoneReset = now;
+          updated = true;
         }
 
         let periodStart = new Date(now);
@@ -133,105 +172,123 @@ module.exports = {
           : null;
 
         // Normalize lastProgressReset to start of day for comparison
-        if (lastProgressReset) {
-          lastProgressReset.setHours(0, 0, 0, 0);
+        const lastProgressResetNormalized = lastProgressReset ? new Date(lastProgressReset) : null;
+        if (lastProgressResetNormalized) {
+          lastProgressResetNormalized.setHours(0, 0, 0, 0);
         }
 
         const needsProgressReset =
-          !lastProgressReset || lastProgressReset.getTime() < periodStart.getTime();
+          !lastProgressResetNormalized ||
+          lastProgressResetNormalized.getTime() < periodStart.getTime();
 
-        if (needsProgressReset) {
-          // Calculate streak based on frequency period (no comeback - streak breaks on first gap)
-          const calculateStreak = (completionHistory, referenceDate, frequency) => {
-            if (!completionHistory || completionHistory.length === 0) {
-              return 0;
+        // Always calculate streak (not just on progress reset)
+        const calculateStreak = (completionHistory, referenceDate, frequency) => {
+          if (!completionHistory || completionHistory.length === 0) {
+            return 0;
+          }
+
+          const today = new Date(referenceDate);
+          today.setHours(0, 0, 0, 0);
+
+          // Helper function to get period key
+          const getPeriodKey = (date, freq) => {
+            const d = new Date(date);
+            d.setHours(0, 0, 0, 0);
+            if (freq === 'week') {
+              d.setDate(d.getDate() - d.getDay()); // Start of week (Sunday)
+              return d.toISOString().split('T')[0];
+            } else if (freq === 'month') {
+              return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            } else {
+              return d.toISOString().split('T')[0];
             }
-
-            const today = new Date(referenceDate);
-            today.setHours(0, 0, 0, 0);
-
-            // Helper function to get period key
-            const getPeriodKey = (date, freq) => {
-              const d = new Date(date);
-              d.setHours(0, 0, 0, 0);
-              if (freq === 'week') {
-                d.setDate(d.getDate() - d.getDay()); // Start of week
-                return d.toISOString().split('T')[0];
-              } else if (freq === 'month') {
-                return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-              } else {
-                return date.toISOString().split('T')[0];
-              }
-            };
-
-            // Group by periods
-            const periodMap = new Map();
-            completionHistory.forEach((entry) => {
-              const entryDate = new Date(entry.date);
-              entryDate.setHours(0, 0, 0, 0);
-              const periodKey = getPeriodKey(entryDate, frequency);
-
-              if (!periodMap.has(periodKey)) {
-                periodMap.set(periodKey, { hasProgress: false, days: [] });
-              }
-              const period = periodMap.get(periodKey);
-              period.days.push({ date: entryDate, progress: entry.progress });
-              if (entry.progress > 0) {
-                period.hasProgress = true;
-              }
-            });
-
-            // Get periods sorted by date (newest first)
-            const periods = Array.from(periodMap.entries())
-              .map(([key, value]) => ({
-                key,
-                ...value,
-                firstDate: value.days[0]?.date || new Date(key),
-              }))
-              .sort((a, b) => b.firstDate - a.firstDate);
-
-            if (periods.length === 0) return 0;
-
-            // Find current period
-            const currentPeriodKey = getPeriodKey(today, frequency);
-            const currentPeriodIdx = periods.findIndex((p) => p.key === currentPeriodKey);
-
-            let streakCount = 0;
-
-            // Start from current period (or latest if current not found) and go backwards
-            const startIdx = currentPeriodIdx >= 0 ? currentPeriodIdx : 0;
-
-            for (let i = startIdx; i < periods.length; i++) {
-              const period = periods[i];
-
-              if (period.hasProgress) {
-                // Period has progress - count it
-                if (frequency === 'day') {
-                  // For daily, count days with progress
-                  streakCount += period.days.filter((d) => d.progress > 0).length;
-                } else {
-                  // For weekly/monthly, count periods
-                  streakCount++;
-                }
-              } else {
-                // Period has no progress - streak broken
-                break;
-              }
-            }
-
-            return streakCount;
           };
 
-          // Calculate streak based on completion history and frequency
-          const streak = calculateStreak(
-            habit.completionHistory,
-            now,
-            habit.goal?.frequency || 'day'
-          );
+          // Helper to get previous period date
+          const getPreviousPeriod = (date, freq) => {
+            const d = new Date(date);
+            if (freq === 'week') {
+              d.setDate(d.getDate() - 7);
+            } else if (freq === 'month') {
+              d.setMonth(d.getMonth() - 1);
+            } else {
+              d.setDate(d.getDate() - 1);
+            }
+            return d;
+          };
 
-          habit.streak = streak;
+          // Group completion history by periods - check if ANY progress exists
+          const periodMap = new Map();
+          completionHistory.forEach((entry) => {
+            const entryDate = new Date(entry.date);
+            entryDate.setHours(0, 0, 0, 0);
+            const periodKey = getPeriodKey(entryDate, frequency);
 
-          // Always reset progress when period changes
+            if (!periodMap.has(periodKey)) {
+              periodMap.set(periodKey, { hasProgress: false });
+            }
+            const period = periodMap.get(periodKey);
+            if (entry.progress > 0) {
+              period.hasProgress = true;
+            }
+          });
+
+          // Check if a period has any progress
+          const periodHasProgress = (periodKey) => {
+            const period = periodMap.get(periodKey);
+            return period && period.hasProgress;
+          };
+
+          let streakCount = 0;
+          let checkDate = new Date(today);
+
+          // First check current period - if it has progress, start counting from here
+          const currentPeriodKey = getPeriodKey(today, frequency);
+          const currentHasProgress = periodHasProgress(currentPeriodKey);
+
+          if (currentHasProgress) {
+            // Current period has progress - count it and continue backwards
+            streakCount = 1;
+            checkDate = getPreviousPeriod(today, frequency);
+          } else {
+            // Current period has no progress - start checking from previous period
+            checkDate = getPreviousPeriod(today, frequency);
+          }
+
+          // Count consecutive previous periods with progress
+          while (true) {
+            const periodKey = getPeriodKey(checkDate, frequency);
+
+            if (periodHasProgress(periodKey)) {
+              streakCount++;
+              checkDate = getPreviousPeriod(checkDate, frequency);
+            } else {
+              // No progress in this period - streak ends
+              break;
+            }
+
+            // Safety limit to prevent infinite loops
+            if (streakCount > 1000) break;
+          }
+
+          return streakCount;
+        };
+
+        // Calculate streak based on completion history and frequency
+        const newStreak = calculateStreak(
+          habit.completionHistory,
+          now,
+          habit.goal?.frequency || 'day'
+        );
+
+        if (habit.streak !== newStreak) {
+          habit.streak = newStreak;
+          updated = true;
+        }
+
+        if (needsProgressReset) {
+          // Only reset progress when period changes (based on goal.frequency)
+          // isDone reset is handled separately based on repeat pattern
           habit.progress = 0;
           habit.lastProgressReset = now;
           updated = true;

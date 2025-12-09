@@ -58,7 +58,7 @@ function Habit() {
                 </div>
               )}
               <div className={styles.habit__streak}>
-                <StreakDisplay streak={habit.streak} repeat={habit.repeat} />
+                <StreakDisplay streak={habit.streak} frequency={habit.goal?.frequency} />
               </div>
               <div className={classNames(styles.habit__created_date, 'p-smallest')}>
                 Created: {habit.createdDate || null}

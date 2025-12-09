@@ -55,55 +55,75 @@ const HabitChart = ({ data, goalAmount, frequency = 'day', currentStreak = 0 }) 
       return currentStreak;
     }
 
-    // For past days, count backwards from that day
-    let streakCount = 0;
-    const seenPeriods = new Set();
-
-    for (let i = dayIndex; i >= 0; i--) {
-      const day = data[i];
-      const hasProgress = day.progress > 0 || day.completed;
-
-      if (freq === 'day') {
-        // Daily: count days with progress
-        if (hasProgress) {
-          streakCount++;
-        } else {
-          break;
-        }
-      } else {
-        // Weekly/Monthly: count periods
+    // For weekly/monthly, first build a map of which periods have progress
+    const periodProgressMap = new Map();
+    if (freq !== 'day') {
+      data.forEach((day) => {
         const periodKey = getPeriodKey(day.date, freq);
-        if (hasProgress && !seenPeriods.has(periodKey)) {
-          seenPeriods.add(periodKey);
-          streakCount++;
-        } else if (!hasProgress && !seenPeriods.has(periodKey)) {
-          // Period has no progress - streak broken
-          break;
+        if (!periodProgressMap.has(periodKey)) {
+          periodProgressMap.set(periodKey, false);
         }
-      }
+        if (day.progress > 0 || day.completed) {
+          periodProgressMap.set(periodKey, true);
+        }
+      });
     }
 
-    // If starting day has no progress, find previous streak
-    const currentDayHasProgress = currentDay.progress > 0 || currentDay.completed;
-    if (!currentDayHasProgress) {
-      streakCount = 0;
-      const seenPeriods2 = new Set();
-      for (let i = dayIndex - 1; i >= 0; i--) {
-        const day = data[i];
-        const hasProgress = day.progress > 0 || day.completed;
+    // For past days, count backwards from that day
+    let streakCount = 0;
 
-        if (freq === 'day') {
-          if (hasProgress) {
+    if (freq === 'day') {
+      // Daily: count consecutive days with progress
+      const currentDayHasProgress = currentDay.progress > 0 || currentDay.completed;
+
+      if (currentDayHasProgress) {
+        // Start counting from this day
+        for (let i = dayIndex; i >= 0; i--) {
+          const day = data[i];
+          if (day.progress > 0 || day.completed) {
             streakCount++;
           } else {
             break;
           }
-        } else {
-          const periodKey = getPeriodKey(day.date, freq);
-          if (hasProgress && !seenPeriods2.has(periodKey)) {
-            seenPeriods2.add(periodKey);
+        }
+      } else {
+        // Day has no progress - find streak from previous day
+        for (let i = dayIndex - 1; i >= 0; i--) {
+          const day = data[i];
+          if (day.progress > 0 || day.completed) {
             streakCount++;
-          } else if (!hasProgress && !seenPeriods2.has(periodKey)) {
+          } else {
+            break;
+          }
+        }
+      }
+    } else {
+      // Weekly/Monthly: count consecutive periods with progress
+      const currentPeriodKey = getPeriodKey(currentDay.date, freq);
+      const currentPeriodHasProgress = periodProgressMap.get(currentPeriodKey) || false;
+
+      // Get sorted unique periods up to and including current day's period
+      const sortedPeriods = [...periodProgressMap.keys()]
+        .filter((key) => key <= currentPeriodKey)
+        .sort()
+        .reverse(); // newest first
+
+      if (currentPeriodHasProgress) {
+        // Current period has progress - count it and continue backwards
+        for (const periodKey of sortedPeriods) {
+          if (periodProgressMap.get(periodKey)) {
+            streakCount++;
+          } else {
+            break;
+          }
+        }
+      } else {
+        // Current period has no progress - start from previous period
+        const periodsWithoutCurrent = sortedPeriods.filter((k) => k !== currentPeriodKey);
+        for (const periodKey of periodsWithoutCurrent) {
+          if (periodProgressMap.get(periodKey)) {
+            streakCount++;
+          } else {
             break;
           }
         }
@@ -345,7 +365,7 @@ const HabitChart = ({ data, goalAmount, frequency = 'day', currentStreak = 0 }) 
           </div>
           <div className={styles.legendItem}>
             <span
-              className={styles.legendDot}
+              className={styles.legendLine}
               style={{ backgroundColor: '#4CAF50', boxShadow: '0 0 4px rgba(76, 175, 80, 0.6)' }}
             ></span>
             <span>Streak</span>
