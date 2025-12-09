@@ -12,13 +12,8 @@
   border-radius: 8px;
 
   @media screen and (min-width: 1024px) {
-    top: 30%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-height: 400px;
-    max-width: 500px;
-    height: 35vw;
-    width: 45vw;
+    max-width: min(70vw, 800px);
+    margin: auto;
   }
 }
 
@@ -30,7 +25,6 @@
 .editHabit__middle {
   border-bottom: 1px solid var(--border-color);
   padding: 16px 24px 24px;
-  max-width: 600px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -42,6 +36,11 @@
   justify-items: center;
   gap: 8px;
   padding: 16px 24px 24px;
+
+  @media screen and (min-width: 1024px) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }
 
 .editHabit__field {
@@ -52,9 +51,6 @@
 
 .editHabit__field--row {
   flex-direction: row;
-}
-
-.editHabit__field input {
 }
 
 .editHabit__goal {

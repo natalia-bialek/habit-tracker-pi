@@ -2,6 +2,23 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
+
+  @media screen and (min-width: 1024px) {
+    max-width: 100%;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+}
+
+.user-profile__column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  @media screen and (min-width: 1024px) {
+    min-width: 400px;
+  }
 }
 
 .user-profile__section {

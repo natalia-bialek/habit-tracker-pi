@@ -7,6 +7,12 @@
   height: 100vh;
 }
 
+.app__content {
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+
 .app__habits {
   max-height: calc(100vh - 106px - 15px);
 }
@@ -29,6 +35,16 @@
   width: 100vw;
   height: 100vh;
   z-index: 2;
+  background-color: rgba(0, 0, 0, 0.8);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.app__overlay--edit {
+  width: 100vw;
+  height: 100vh;
+  z-index: 4;
   background-color: rgba(0, 0, 0, 0.8);
   position: absolute;
   top: 0;

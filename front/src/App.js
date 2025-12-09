@@ -93,6 +93,7 @@ function App() {
         </div>
       )}
       {showingHabit.isVisible && showingHabit._id && <div className={styles.app__overlay}></div>}
+      {editingHabit.isVisible && <div className={styles['app__overlay--edit']}></div>}
       {loggedUser && (
         <EnergyLevelModal
           isOpen={showEnergyModal}
