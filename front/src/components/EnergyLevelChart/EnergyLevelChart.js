@@ -68,9 +68,13 @@ const EnergyLevelChart = ({ data, currentDate }) => {
     levels: levels.slice(0, 5), // First 5 entries
   });
 
+  // Format the "today" date for display (DD.MM.YYYY)
+  const formattedToday = `${today.getDate().toString().padStart(2, '0')}.${(today.getMonth() + 1).toString().padStart(2, '0')}.${today.getFullYear()}`;
+
   if (!levels || levels.length === 0) {
     return (
       <div className={styles.chartContainer}>
+        <p className={styles.currentDate}>Today: <span>{formattedToday}</span></p>
         <p className={styles.noData}>No energy level data. Add your first energy level!</p>
       </div>
     );
@@ -123,7 +127,7 @@ const EnergyLevelChart = ({ data, currentDate }) => {
 
   return (
     <div className={styles.chartContainer}>
-      <h3 className={styles.chartTitle}>Energy Levels - Last 30 Days</h3>
+        <p className={styles.currentDate}>Today: <span>{formattedToday}</span></p>
       <div className={styles.chartWrapper}>
         <ResponsiveContainer width='100%' height={300}>
           <LineChart data={chartData} margin={{ top: 15, right: 30, left: 20, bottom: 5 }}>
