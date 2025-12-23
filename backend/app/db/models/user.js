@@ -25,7 +25,6 @@ const UserSchema = new mongoose.Schema({
     maxLength: 100,
   },
   habits: [Habit.schema],
-  password: String,
   hash: String,
   salt: String,
   googleId: {
