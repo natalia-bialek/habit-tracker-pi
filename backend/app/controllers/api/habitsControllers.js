@@ -75,7 +75,11 @@ module.exports = {
         // ============================================
         let periodStart = new Date(now);
         if (habit.goal && habit.goal.frequency === 'week') {
-          periodStart.setDate(periodStart.getDate() - periodStart.getDay());
+          // Week starts on Monday (European standard)
+          // getDay(): 0=Sun, 1=Mon, 2=Tue... → days to subtract to get Monday
+          const dayOfWeek = periodStart.getDay();
+          const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+          periodStart.setDate(periodStart.getDate() - daysToMonday);
           periodStart.setHours(0, 0, 0, 0);
         } else if (habit.goal && habit.goal.frequency === 'month') {
           periodStart.setDate(1);
@@ -177,7 +181,10 @@ module.exports = {
             const d = new Date(date);
             d.setHours(0, 0, 0, 0);
             if (freq === 'week') {
-              d.setDate(d.getDate() - d.getDay()); // Start of week (Sunday)
+              // Week starts on Monday (European standard)
+              const dayOfWeek = d.getDay();
+              const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+              d.setDate(d.getDate() - daysToMonday);
               return d.toISOString().split('T')[0];
             } else if (freq === 'month') {
               return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
