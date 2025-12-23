@@ -66,96 +66,13 @@ module.exports = {
         }
 
         const now = getCurrentDate();
-
-        let needsIsDoneReset = false;
         const today = new Date(now);
         today.setHours(0, 0, 0, 0);
 
-        if (habit.repeat) {
-          try {
-            let isTodayOccurrence = false;
-
-            // For simple daily habits (FREQ=DAILY without complex rules), every day is an occurrence
-            if (habit.repeat.includes('FREQ=DAILY') && !habit.repeat.includes('BYDAY')) {
-              isTodayOccurrence = true;
-            }
-            // For weekly habits with specific days
-            else if (habit.repeat.includes('FREQ=WEEKLY') && habit.repeat.includes('BYDAY')) {
-              const rule = RRule.fromString(habit.repeat);
-              const ruleOptions = rule.options;
-
-              if (ruleOptions.byweekday && ruleOptions.byweekday.length > 0) {
-                const todayWeekday = today.getDay();
-                // RRule uses Monday=0, JavaScript uses Sunday=0
-                const rruleWeekday = (todayWeekday + 6) % 7;
-                isTodayOccurrence = ruleOptions.byweekday.some(
-                  (day) => (typeof day === 'number' ? day : day.weekday) === rruleWeekday
-                );
-              }
-            }
-            // For other patterns, use RRule calculation with proper date
-            else {
-              const rule = RRule.fromString(habit.repeat);
-              // Use yesterday as reference to check if today is an occurrence
-              const yesterday = new Date(today);
-              yesterday.setDate(yesterday.getDate() - 1);
-              const nextOccurrence = rule.after(yesterday, true);
-              isTodayOccurrence =
-                nextOccurrence && nextOccurrence.toDateString() === today.toDateString();
-            }
-
-            if (isTodayOccurrence) {
-              // Check if goal for the current period has been achieved
-              const goalAmount = habit.goal?.amount || 1;
-              const currentProgress = habit.progress || 0;
-              const goalAchieved = currentProgress >= goalAmount;
-
-              if (goalAchieved) {
-                // Goal achieved for this period - don't reset isDone
-                needsIsDoneReset = false;
-              } else {
-                // Goal not yet achieved - check if we need to reset
-                const lastIsDoneReset = habit.lastIsDoneReset
-                  ? new Date(habit.lastIsDoneReset)
-                  : null;
-
-                // Normalize lastIsDoneReset for comparison
-                const lastIsDoneResetNormalized = lastIsDoneReset
-                  ? new Date(lastIsDoneReset)
-                  : null;
-                if (lastIsDoneResetNormalized) {
-                  lastIsDoneResetNormalized.setHours(0, 0, 0, 0);
-                }
-
-                needsIsDoneReset =
-                  !lastIsDoneResetNormalized ||
-                  lastIsDoneResetNormalized.getTime() < today.getTime();
-              }
-            }
-          } catch (e) {
-            // Fallback: treat as daily habit, but respect goal achievement
-            const goalAmount = habit.goal?.amount || 1;
-            const currentProgress = habit.progress || 0;
-            const goalAchieved = currentProgress >= goalAmount;
-
-            if (!goalAchieved) {
-              const lastIsDoneReset = habit.lastIsDoneReset
-                ? new Date(habit.lastIsDoneReset)
-                : null;
-              if (lastIsDoneReset) {
-                lastIsDoneReset.setHours(0, 0, 0, 0);
-              }
-              needsIsDoneReset = !lastIsDoneReset || lastIsDoneReset.getTime() < today.getTime();
-            }
-          }
-        }
-
-        if (needsIsDoneReset) {
-          habit.isDone = false;
-          habit.lastIsDoneReset = now;
-          updated = true;
-        }
-
+        // ============================================
+        // STEP 1: Calculate period start based on goal.frequency
+        // This determines when PROGRESS should reset
+        // ============================================
         let periodStart = new Date(now);
         if (habit.goal && habit.goal.frequency === 'week') {
           periodStart.setDate(periodStart.getDate() - periodStart.getDay());
@@ -171,7 +88,6 @@ module.exports = {
           ? new Date(habit.lastProgressReset)
           : null;
 
-        // Normalize lastProgressReset to start of day for comparison
         const lastProgressResetNormalized = lastProgressReset ? new Date(lastProgressReset) : null;
         if (lastProgressResetNormalized) {
           lastProgressResetNormalized.setHours(0, 0, 0, 0);
@@ -180,6 +96,72 @@ module.exports = {
         const needsProgressReset =
           !lastProgressResetNormalized ||
           lastProgressResetNormalized.getTime() < periodStart.getTime();
+
+        // ============================================
+        // STEP 2: Check if today is an occurrence day based on repeat pattern (RRULE)
+        // This determines when isDone should reset
+        // ============================================
+        let isTodayOccurrence = false;
+
+        try {
+          // For simple daily habits (FREQ=DAILY without BYDAY), every day is an occurrence
+          if (habit.repeat.includes('FREQ=DAILY') && !habit.repeat.includes('BYDAY')) {
+            isTodayOccurrence = true;
+          }
+          // For weekly habits with specific days
+          else if (habit.repeat.includes('FREQ=WEEKLY') && habit.repeat.includes('BYDAY')) {
+            const rule = RRule.fromString(habit.repeat);
+            const ruleOptions = rule.options;
+
+            if (ruleOptions.byweekday && ruleOptions.byweekday.length > 0) {
+              const todayWeekday = today.getDay();
+              // RRule uses Monday=0, JavaScript uses Sunday=0
+              const rruleWeekday = (todayWeekday + 6) % 7;
+              isTodayOccurrence = ruleOptions.byweekday.some(
+                (day) => (typeof day === 'number' ? day : day.weekday) === rruleWeekday
+              );
+            }
+          }
+          // For other patterns, use RRule calculation
+          else {
+            const rule = RRule.fromString(habit.repeat);
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const nextOccurrence = rule.after(yesterday, true);
+            isTodayOccurrence =
+              nextOccurrence && nextOccurrence.toDateString() === today.toDateString();
+          }
+        } catch (e) {
+          // Fallback: treat as daily habit
+          isTodayOccurrence = true;
+        }
+
+        // ============================================
+        // STEP 3: Determine if isDone should reset
+        // Reset isDone if:
+        // - Today is an occurrence day (based on repeat pattern)
+        // - Goal for current period is NOT yet achieved
+        // - Last isDone reset was before today
+        // ============================================
+        let needsIsDoneReset = false;
+
+        if (isTodayOccurrence) {
+          const goalAmount = habit.goal?.amount || 1;
+          const currentProgress = habit.progress || 0;
+          const goalAchieved = currentProgress >= goalAmount;
+
+          if (!goalAchieved) {
+            const lastIsDoneReset = habit.lastIsDoneReset ? new Date(habit.lastIsDoneReset) : null;
+
+            const lastIsDoneResetNormalized = lastIsDoneReset ? new Date(lastIsDoneReset) : null;
+            if (lastIsDoneResetNormalized) {
+              lastIsDoneResetNormalized.setHours(0, 0, 0, 0);
+            }
+
+            needsIsDoneReset =
+              !lastIsDoneResetNormalized || lastIsDoneResetNormalized.getTime() < today.getTime();
+          }
+        }
 
         // Always calculate streak (not just on progress reset)
         const calculateStreak = (completionHistory, referenceDate, frequency) => {
@@ -286,11 +268,23 @@ module.exports = {
           updated = true;
         }
 
+        // ============================================
+        // STEP 5: Apply resets
+        // ============================================
+
+        // Reset progress when new period starts (based on goal.frequency)
         if (needsProgressReset) {
-          // Only reset progress when period changes (based on goal.frequency)
-          // isDone reset is handled separately based on repeat pattern
           habit.progress = 0;
+          habit.isDone = false; // Also reset isDone when period changes
           habit.lastProgressReset = now;
+          habit.lastIsDoneReset = now;
+          updated = true;
+        }
+        // Reset only isDone when new occurrence day starts (based on repeat pattern)
+        // but only if goal not yet achieved and we didn't already reset above
+        else if (needsIsDoneReset) {
+          habit.isDone = false;
+          habit.lastIsDoneReset = now;
           updated = true;
         }
       });
