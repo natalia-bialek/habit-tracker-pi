@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useUserStore } from './store';
 
 const instance = axios.create({
   baseURL: process.env.API_URL || 'http://localhost:3001/api',
@@ -14,6 +15,18 @@ instance.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor odpowiedzi - wyloguj przy 401 (token wygasł)
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token wygasł lub jest nieprawidłowy - wyloguj użytkownika
+      useUserStore.getState().logoutUser();
+    }
     return Promise.reject(error);
   }
 );
