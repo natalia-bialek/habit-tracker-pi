@@ -1,5 +1,5 @@
 .chartContainer {
-  margin: 20px 0;
+  overflow-y: auto;
   padding: 20px;
   background: #fff;
   border-radius: 8px;
@@ -70,6 +70,14 @@
   gap: 20px;
   justify-content: center;
   margin-top: 10px;
+}
+
+@media screen and (max-width: 480px) {
+  .chartLegend {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 8px 16px;
+  }
 }
 
 .legendItem {

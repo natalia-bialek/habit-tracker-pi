@@ -43,6 +43,7 @@ function Habit() {
                 <FontAwesomeIcon icon={faX} />
               </button>
             </div>
+            <div className={styles.habit__content}>
             <div className={styles.habit__middle}>
               <div className={styles.habit__detail}>
                 <strong>Goal:</strong>
@@ -75,6 +76,7 @@ function Habit() {
                   currentStreak={habit.streak}
                 />
               )}
+            </div>
             </div>
             <div className={styles.habit__bottom}>
               <button className='button-secondary' onClick={deleteHandler}>

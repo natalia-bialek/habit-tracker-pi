@@ -1,5 +1,5 @@
 .editHabit {
-  position: absolute;
+  position: fixed;
   inset: 0;
   margin: auto 16px;
   height: fit-content;

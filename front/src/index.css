@@ -36,6 +36,10 @@ body {
   font-size: 1rem;
 }
 
+body.no-scroll {
+  overflow: hidden;
+}
+
 input,
 select {
   background: transparent;

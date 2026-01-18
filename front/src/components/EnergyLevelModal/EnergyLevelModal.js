@@ -103,12 +103,12 @@ const EnergyLevelModal = ({ isOpen, onClose, totalHabits }) => {
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.classList.add('no-scroll');
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.classList.remove('no-scroll');
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.classList.remove('no-scroll');
     };
   }, [isOpen]);
 

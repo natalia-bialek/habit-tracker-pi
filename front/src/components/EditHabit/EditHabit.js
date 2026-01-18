@@ -53,18 +53,23 @@ function EditHabit({ _id = '' }) {
 
   const handleEditSubmit = (event) => {
     event.preventDefault();
-    updateHabitMutation.mutate({
-      title: title,
-      repeat: repeat,
-      isDone: progress < amount ? false : true,
-      goal: {
-        amount: amount,
-        unit: unit,
-        frequency: frequency,
+    updateHabitMutation.mutate(
+      {
+        title: title,
+        repeat: repeat,
+        isDone: progress < amount ? false : true,
+        goal: {
+          amount: amount,
+          unit: unit,
+          frequency: frequency,
+        },
+        progress: progress,
+        createdDate: createdDate,
       },
-      progress: progress,
-      createdDate: createdDate,
-    });
+      {
+        onSuccess: () => hideEditHabit(),
+      }
+    );
   };
 
   const handleAddSubmit = async (event) => {

@@ -33,6 +33,18 @@ function App() {
     }
   }, [loggedUser, queryClient]);
 
+  // Prevent body scroll when overlay is visible
+  useEffect(() => {
+    if (showingHabit.isVisible || editingHabit.isVisible) {
+      document.body.classList.add('no-scroll');
+    } else {
+      document.body.classList.remove('no-scroll');
+    }
+    return () => {
+      document.body.classList.remove('no-scroll');
+    };
+  }, [showingHabit.isVisible, editingHabit.isVisible]);
+
   // Check if energy modal should be shown (once per day per user)
   useEffect(() => {
     if (!loggedUser) {
