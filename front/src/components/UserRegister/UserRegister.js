@@ -85,7 +85,7 @@ function UserRegister() {
         })
         .then((res) => {
           if (res.data.accessToken) {
-            loginUser(res.data._id);
+            loginUser(res.data._id, res.data.accessToken);
           }
         });
     } catch (error) {

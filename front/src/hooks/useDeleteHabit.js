@@ -8,7 +8,7 @@ export function useDeleteHabit() {
 
   const mutation = useMutation({
     mutationFn: async (habitId) => {
-      axios.delete(`/habits/${habitId}`);
+      await axios.delete(`/habits/${habitId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['habits'] });

@@ -136,7 +136,6 @@ const RepeatPicker = (props) => {
           <option value={RRule.DAILY}>Daily</option>
           <option value={RRule.WEEKLY}>Weekly</option>
           <option value={RRule.MONTHLY}>Monthly</option>
-          <option value={RRule.YEARLY}>Yearly</option>
         </select>
       </div>
 
@@ -147,7 +146,6 @@ const RepeatPicker = (props) => {
           {frequency === RRule.DAILY && (interval > 1 ? 'days' : 'day')}
           {frequency === RRule.WEEKLY && (interval > 1 ? 'weeks' : 'week')}
           {frequency === RRule.MONTHLY && (interval > 1 ? 'months' : 'month')}
-          {frequency === RRule.YEARLY && (interval > 1 ? 'years' : 'year')}
         </span>
       </div>
       {frequency === RRule.WEEKLY && (

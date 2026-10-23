@@ -3,6 +3,10 @@ import styles from './UserProfile.module.css';
 import { useFetchUser } from '../../hooks/user/useFetchUser.js';
 import { useUpdateProfile } from '../../hooks/user/useUpdateProfile.js';
 import { useUpdatePassword } from '../../hooks/user/useUpdatePassword.js';
+import { useFetchEnergyLevels } from '../../hooks/user/useFetchEnergyLevels.js';
+import { useFetchHabits } from '../../hooks/useFetchHabits.js';
+import EnergyLevelModal from '../EnergyLevelModal/EnergyLevelModal.js';
+import EnergyLevelChart from '../EnergyLevelChart/EnergyLevelChart.js';
 
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -28,6 +32,9 @@ function UserProfile() {
   const [user, isLoadingUser] = useFetchUser();
   const updateProfileMutation = useUpdateProfile();
   const updatePasswordMutation = useUpdatePassword();
+  const [energyLevels, isLoadingEnergyLevels] = useFetchEnergyLevels();
+  const [habits] = useFetchHabits();
+  const [showEnergyModal, setShowEnergyModal] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -124,150 +131,177 @@ function UserProfile() {
 
   return (
     <div className={styles['user-profile']}>
-      <div className={styles['user-profile__section']}>
-        <h3 className={styles['user-profile__section-title']}>Basic information</h3>
-        <form onSubmit={handleUpdateProfile} className={styles['user-profile__form']}>
-          <div className={styles['user-profile__form-group']}>
-            <label htmlFor='name' className={styles['user-profile__label']}>
-              Name:
-            </label>
-            <input
-              type='text'
-              id='name'
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className={styles['user-profile__input']}
-            />
-          </div>
+      <div className={styles['user-profile__column']}>
+        <div className={styles['user-profile__section']}>
+          <h3 className={styles['user-profile__section-title']}>Basic information</h3>
+          <form onSubmit={handleUpdateProfile} className={styles['user-profile__form']}>
+            <div className={styles['user-profile__form-group']}>
+              <label htmlFor='name' className={styles['user-profile__label']}>
+                Name:
+              </label>
+              <input
+                type='text'
+                id='name'
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className={styles['user-profile__input']}
+              />
+            </div>
 
-          <div className={styles['user-profile__form-group']}>
-            <label htmlFor='email' className={styles['user-profile__label']}>
-              Email (read-only):
-            </label>
-            <input
-              type='email'
-              id='email'
-              value={email}
-              disabled
-              className={`${styles['user-profile__input']} ${styles['user-profile__input--disabled']}`}
-            />
-          </div>
+            <div className={styles['user-profile__form-group']}>
+              <label htmlFor='email' className={styles['user-profile__label']}>
+                Email (read-only):
+              </label>
+              <input
+                type='email'
+                id='email'
+                value={email}
+                disabled
+                className={`${styles['user-profile__input']} ${styles['user-profile__input--disabled']}`}
+              />
+            </div>
 
-          <button
-            type='submit'
-            disabled={updateProfileMutation.isPending || isLoadingUser}
-            className={`button-primary ${styles['user-profile__button']}`}
-          >
-            {updateProfileMutation.isPending ? 'Saving...' : 'Save Changes'}
-          </button>
-        </form>
+            <button
+              type='submit'
+              disabled={updateProfileMutation.isPending || isLoadingUser}
+              className={`button-primary ${styles['user-profile__button']}`}
+            >
+              {updateProfileMutation.isPending ? 'Saving...' : 'Save Changes'}
+            </button>
+          </form>
+        </div>
+
+        <div className={styles['user-profile__section']}>
+          <h3 className={styles['user-profile__section-title']}>Change password</h3>
+          <form onSubmit={handleChangePassword} className={styles['user-profile__form']}>
+            <div className={styles['user-profile__form-group']}>
+              <label htmlFor='currentPassword' className={styles['user-profile__label']}>
+                Current password:
+              </label>
+              <div className={styles['user-profile__password-input']}>
+                <input
+                  type={showPasswords.current ? 'text' : 'password'}
+                  id='currentPassword'
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
+                  className={styles['user-profile__input']}
+                />
+                <button
+                  type='button'
+                  className={styles['user-profile__password-toggle']}
+                  onClick={() => togglePasswordVisibility('current')}
+                >
+                  {showPasswords.current ? (
+                    <FontAwesomeIcon icon={faEyeSlash} />
+                  ) : (
+                    <FontAwesomeIcon icon={faEye} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className={styles['user-profile__form-group']}>
+              <label htmlFor='newPassword' className={styles['user-profile__label']}>
+                New password:
+              </label>
+              <div className={styles['user-profile__password-input']}>
+                <input
+                  type={showPasswords.new ? 'text' : 'password'}
+                  id='newPassword'
+                  value={newPassword}
+                  onChange={(e) => handleNewPasswordChange(e.target.value)}
+                  required
+                  minLength='6'
+                  className={styles['user-profile__input']}
+                />
+                <button
+                  type='button'
+                  className={styles['user-profile__password-toggle']}
+                  onClick={() => togglePasswordVisibility('new')}
+                >
+                  {showPasswords.new ? (
+                    <FontAwesomeIcon icon={faEyeSlash} />
+                  ) : (
+                    <FontAwesomeIcon icon={faEye} />
+                  )}
+                </button>
+              </div>
+              {passwordErrors.newPassword && (
+                <div className={styles['user-profile__error']}>{passwordErrors.newPassword}</div>
+              )}
+            </div>
+
+            <div className={styles['user-profile__form-group']}>
+              <label htmlFor='confirmPassword' className={styles['user-profile__label']}>
+                Confirm new password:
+              </label>
+              <div className={styles['user-profile__password-input']}>
+                <input
+                  type={showPasswords.confirm ? 'text' : 'password'}
+                  id='confirmPassword'
+                  value={confirmPassword}
+                  onChange={(e) => handleConfirmPasswordChange(e.target.value)}
+                  required
+                  minLength='6'
+                  className={styles['user-profile__input']}
+                />
+                <button
+                  type='button'
+                  className={styles['user-profile__password-toggle']}
+                  onClick={() => togglePasswordVisibility('confirm')}
+                >
+                  {showPasswords.confirm ? (
+                    <FontAwesomeIcon icon={faEyeSlash} />
+                  ) : (
+                    <FontAwesomeIcon icon={faEye} />
+                  )}
+                </button>
+              </div>
+              {passwordErrors.confirmPassword && (
+                <div className={styles['user-profile__error']}>
+                  {passwordErrors.confirmPassword}
+                </div>
+              )}
+            </div>
+
+            <button
+              type='submit'
+              disabled={updatePasswordMutation.isPending || isLoadingUser}
+              className={`button-primary ${styles['user-profile__button']}`}
+            >
+              {updatePasswordMutation.isPending ? 'Changing...' : 'Change Password'}
+            </button>
+          </form>
+        </div>
       </div>
 
-      <div className={styles['user-profile__section']}>
-        <h3 className={styles['user-profile__section-title']}>Change password</h3>
-        <form onSubmit={handleChangePassword} className={styles['user-profile__form']}>
-          <div className={styles['user-profile__form-group']}>
-            <label htmlFor='currentPassword' className={styles['user-profile__label']}>
-              Current password:
-            </label>
-            <div className={styles['user-profile__password-input']}>
-              <input
-                type={showPasswords.current ? 'text' : 'password'}
-                id='currentPassword'
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                required
-                className={styles['user-profile__input']}
-              />
-              <button
-                type='button'
-                className={styles['user-profile__password-toggle']}
-                onClick={() => togglePasswordVisibility('current')}
-              >
-                {showPasswords.current ? (
-                  <FontAwesomeIcon icon={faEyeSlash} />
-                ) : (
-                  <FontAwesomeIcon icon={faEye} />
-                )}
-              </button>
-            </div>
-          </div>
-
-          <div className={styles['user-profile__form-group']}>
-            <label htmlFor='newPassword' className={styles['user-profile__label']}>
-              New password:
-            </label>
-            <div className={styles['user-profile__password-input']}>
-              <input
-                type={showPasswords.new ? 'text' : 'password'}
-                id='newPassword'
-                value={newPassword}
-                onChange={(e) => handleNewPasswordChange(e.target.value)}
-                required
-                minLength='6'
-                className={styles['user-profile__input']}
-              />
-              <button
-                type='button'
-                className={styles['user-profile__password-toggle']}
-                onClick={() => togglePasswordVisibility('new')}
-              >
-                {showPasswords.new ? (
-                  <FontAwesomeIcon icon={faEyeSlash} />
-                ) : (
-                  <FontAwesomeIcon icon={faEye} />
-                )}
-              </button>
-            </div>
-            {passwordErrors.newPassword && (
-              <div className={styles['user-profile__error']}>{passwordErrors.newPassword}</div>
-            )}
-          </div>
-
-          <div className={styles['user-profile__form-group']}>
-            <label htmlFor='confirmPassword' className={styles['user-profile__label']}>
-              Confirm new password:
-            </label>
-            <div className={styles['user-profile__password-input']}>
-              <input
-                type={showPasswords.confirm ? 'text' : 'password'}
-                id='confirmPassword'
-                value={confirmPassword}
-                onChange={(e) => handleConfirmPasswordChange(e.target.value)}
-                required
-                minLength='6'
-                className={styles['user-profile__input']}
-              />
-              <button
-                type='button'
-                className={styles['user-profile__password-toggle']}
-                onClick={() => togglePasswordVisibility('confirm')}
-              >
-                {showPasswords.confirm ? (
-                  <FontAwesomeIcon icon={faEyeSlash} />
-                ) : (
-                  <FontAwesomeIcon icon={faEye} />
-                )}
-              </button>
-            </div>
-            {passwordErrors.confirmPassword && (
-              <div className={styles['user-profile__error']}>{passwordErrors.confirmPassword}</div>
-            )}
-          </div>
-
+      <div className={styles['user-profile__column']}>
+        <div className={styles['user-profile__section']}>
+          <h3 className={styles['user-profile__section-title']}>Energy Level</h3>
           <button
-            type='submit'
-            disabled={updatePasswordMutation.isPending || isLoadingUser}
+            onClick={() => setShowEnergyModal(true)}
             className={`button-primary ${styles['user-profile__button']}`}
           >
-            {updatePasswordMutation.isPending ? 'Changing...' : 'Change Password'}
+            Change Energy Level
           </button>
-        </form>
+          {!isLoadingEnergyLevels && (
+            <div className={styles['user-profile__chart-container']}>
+              <EnergyLevelChart data={energyLevels || []} currentDate={energyLevels?.currentDate} />
+            </div>
+          )}
+        </div>
       </div>
 
       {message && <div className={styles['user-profile__message']}>{message}</div>}
       {errorMessage && <div className={styles['user-profile__error']}>{errorMessage}</div>}
+
+      <EnergyLevelModal
+        isOpen={showEnergyModal}
+        onClose={() => setShowEnergyModal(false)}
+        totalHabits={habits?.length || 0}
+      />
     </div>
   );
 }

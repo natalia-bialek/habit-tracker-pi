@@ -9,7 +9,11 @@ export function useUpdateHabit(id) {
       const res = await axios.put(`/habits/${id}`, updatedHabitData);
       return res.data;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['habits'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['habits'] });
+      queryClient.invalidateQueries({ queryKey: ['habit', id] });
+      queryClient.invalidateQueries({ queryKey: ['habitHistory', id] });
+    },
   });
 
   return updateMutation;

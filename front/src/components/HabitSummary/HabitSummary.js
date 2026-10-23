@@ -62,7 +62,7 @@ function HabitSummary({ habit }) {
           </div>
         </div>
         <div className={styles.summary__streak}>
-          <StreakDisplay streak={habit.streak} repeat={habit.repeat} />
+          <StreakDisplay streak={habit.streak} frequency={habit.goal?.frequency} />
         </div>
       </div>
 

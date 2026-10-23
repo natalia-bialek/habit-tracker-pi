@@ -6,10 +6,20 @@
   overflow-y: auto;
   max-height: 100%;
   padding-bottom: 8px;
+
+  @media screen and (min-width: 1024px) {
+    flex-direction: row;
+    gap: 24px;
+  }
 }
 
 .habitList__inner {
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  @media screen and (min-width: 1024px) {
+    flex: 1;
+    min-width: 0;
+  }
 }

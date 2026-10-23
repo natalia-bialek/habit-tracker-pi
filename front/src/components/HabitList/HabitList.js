@@ -8,7 +8,7 @@ function HabitList() {
   const [habits, isLoading] = habitListData;
   return (
     <>
-      {isLoading && 'Ładowanie...'}
+      {isLoading && 'Loading...'}
       {habits && (
         <div className={styles.habitList}>
           <div className={styles.habitList__inner}>

@@ -2,28 +2,20 @@ import React from 'react';
 import styles from './StreakDisplay.module.css';
 
 const StreakDisplay = (props) => {
-  const { streak, repeat } = props;
+  const { streak, frequency } = props;
 
   if (!streak || streak === 0) {
     return null;
   }
 
-  const getStreakEmoji = (count) => {
-    if (count >= 10) return '🔥🔥🔥';
-    if (count >= 5) return '🔥🔥';
-    if (count >= 3) return '🔥';
-    return '✨';
-  };
-
-  const getStreakText = (count, repeat) => {
+  const getStreakText = (count, frequency) => {
     let periodText = 'day';
 
-    if (repeat && repeat.includes('FREQ=WEEKLY')) {
+    // Use goal.frequency to determine the streak unit
+    if (frequency === 'week') {
       periodText = 'week';
-    } else if (repeat && repeat.includes('FREQ=MONTHLY')) {
+    } else if (frequency === 'month') {
       periodText = 'month';
-    } else if (repeat && repeat.includes('FREQ=YEARLY')) {
-      periodText = 'year';
     } else {
       periodText = 'day';
     }
@@ -35,8 +27,7 @@ const StreakDisplay = (props) => {
 
   return (
     <div className={styles.streak}>
-      <span className={styles.streak__emoji}>{getStreakEmoji(streak)}</span>
-      <span className={styles.streak__text}>{getStreakText(streak, repeat)} streak</span>
+      <span className={styles.streak__text}>{getStreakText(streak, frequency)} streak</span>
     </div>
   );
 };

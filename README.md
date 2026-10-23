@@ -2,37 +2,39 @@
 
 Needs backend .env file
 
-
-
 ## Installation
 
 ```bash
-  npm install 
-  cd front 
+  npm install
+  cd front
   npm install
   cd ..
   cd backend
   npm install
 ```
-## Running 
+
+## Running
 
 ```bash
-    cd front 
+    cd front
     npm start
 ```
+
 ```bash
-    cd backend 
+    cd backend
     node server.js
 ```
+
 ## Checklist
 
 - [x] Add new habit feature
 - [x] Edit habit feature
 - [x] Delete habit feature
 - [x] Make habit as done feature
-- [ ] Reset isDone after a certain amount of time
-- [ ] Count strike 
-- [ ] Chart based on strike 
+- [x] Reset isDone after a certain amount of time
+- [x] Count streak
+- [x] Chart based on streak
 - [x] User authentication
 - [x] Log in/log out feature
-- [ ] Change user password feature
+- [x] Change user password feature
+- [x] Check energy level
